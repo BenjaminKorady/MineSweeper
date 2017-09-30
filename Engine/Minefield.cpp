@@ -2,6 +2,7 @@
 #include "SpriteCodex.h"
 #include "RectI.h"
 #include <random>
+#include <algorithm>
 #include <assert.h>
 
 
@@ -25,11 +26,39 @@ void Minefield::Tile::draw(Graphics & gfx) const
 		SpriteCodex::drawTileButton(position, gfx);
 		break;
 	case State::Revealed:
-		if (mine) {
+		if (hasMine()) {
 			SpriteCodex::drawTileBomb(position, gfx);
 		}
 		else {
-			SpriteCodex::drawTile0(position, gfx);
+			switch (adjacentMines) {
+			case 0:
+				SpriteCodex::drawTile0(position, gfx);
+				break;
+			case 1:
+				SpriteCodex::drawTile1(position, gfx);
+				break;
+			case 2:
+				SpriteCodex::drawTile2(position, gfx);
+				break;
+			case 3:
+				SpriteCodex::drawTile3(position, gfx);
+				break;
+			case 4:
+				SpriteCodex::drawTile4(position, gfx);
+				break;
+			case 5:
+				SpriteCodex::drawTile5(position, gfx);
+				break;
+			case 6:
+				SpriteCodex::drawTile6(position, gfx);
+				break;
+			case 7:
+				SpriteCodex::drawTile7(position, gfx);
+				break;
+			case 8:
+				SpriteCodex::drawTile8(position, gfx);
+				break;
+			}
 		}
 		break;
 	case State::Flagged:
@@ -39,9 +68,19 @@ void Minefield::Tile::draw(Graphics & gfx) const
 	}
 }
 
+Vei2 Minefield::Tile::getPosition() const
+{
+	return position;
+}
+
 void Minefield::Tile::setPosition(Vei2 posIn)
 {
 	position = posIn;
+}
+
+void Minefield::Tile::setAdjacentMines(int in)
+{
+	adjacentMines = in;
 }
 
 void Minefield::Tile::spawnMine()
@@ -96,6 +135,13 @@ Minefield::Minefield(int nMinesIn)
 		tileAt(spawnPosition).spawnMine();
 	}
 
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			int n = getAdjacentMines(field[y*width + x]);
+			field[y*width + x].setAdjacentMines(n);
+		}
+	}
+
 }
 
 void Minefield::draw(Graphics & gfx)
@@ -131,12 +177,38 @@ void Minefield::flagTileAt(Vei2 & clickLocation)
 	field[tileLocation.y * width + tileLocation.x].flag();
 }
 
-const Minefield::Tile & Minefield::tileAt(Vei2 & tileLocation) const
+const Minefield::Tile & Minefield::tileAt(const Vei2 & tileLocation) const
 {
 	return field[tileLocation.y * width + tileLocation.x];
 }
 
-Minefield::Tile & Minefield::tileAt(Vei2 & tileLocation)
+Minefield::Tile & Minefield::tileAt(const Vei2 & tileLocation)
 {
 	return field[tileLocation.y * width + tileLocation.x];
+}
+
+int Minefield::getAdjacentMines(const Tile& tileIn) const
+{
+
+	Vei2 checkStart;
+	Vei2 checkEnd;
+
+	Vei2 tileLocal = getTileLocation(tileIn.getPosition());
+
+	checkStart.x = std::max(0, tileLocal.x - 1);
+	checkStart.y = std::max(0, tileLocal.y - 1);
+	checkEnd.x = std::min(tileLocal.x + 1, width - 1);
+	checkEnd.y = std::min(tileLocal.y + 1, height - 1);
+
+	int mineCounter = 0;
+
+	for (int y = checkStart.y; y <= checkEnd.y; ++y) {
+		for (int x = checkStart.x; x <= checkEnd.x; ++x) {
+			if (field[y*width + x].hasMine()) {
+				++mineCounter;
+			}
+		}
+	}
+
+	return mineCounter;
 }
