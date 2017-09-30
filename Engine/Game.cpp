@@ -24,7 +24,8 @@
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
-	gfx( wnd )
+	gfx( wnd ),
+	minefield(20)
 {
 }
 
@@ -38,8 +39,18 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	while (!wnd.mouse.IsEmpty()) {
+		const Mouse::Event e = wnd.mouse.Read();
+		if (e.GetType() == Mouse::Event::Type::LPress) 	{
+			minefield.revealTileAt(e.GetPos());
+		}
+		else if (e.GetType() == Mouse::Event::Type::RPress) {
+			minefield.flagTileAt(e.GetPos());
+		}
+	}
 }
 
 void Game::ComposeFrame()
 {
+	minefield.draw(gfx);
 }
