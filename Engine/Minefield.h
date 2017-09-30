@@ -15,13 +15,13 @@ private:
 
 		Tile();
 		Tile(Vei2 posIn);
-		void draw(Graphics& gfx) const;
+		void draw(Graphics& gfx, bool isExploded) const;
 		
 		Vei2 getPosition() const;
 		void setPosition(Vei2 posIn);
 		void setAdjacentMines(int in);
 		void spawnMine();
-		void reveal();
+		bool reveal();
 		void flag();
 		bool hasMine() const;
 
@@ -34,6 +34,7 @@ private:
 		int adjacentMines;
 		State state = State::Hidden;
 		bool mine = false;
+
 	};
 
 public:
@@ -54,6 +55,8 @@ private:
 	int nMines;
 	Vei2 getTileLocation(const Vei2& clickLocation) const;
 	int getAdjacentMines(const Tile& tileIn) const;
+	bool isExploded = false;
+
 
 
 };

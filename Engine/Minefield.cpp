@@ -18,53 +18,116 @@ Minefield::Tile::Tile(Vei2 posIn)
 {
 }
 
-void Minefield::Tile::draw(Graphics & gfx) const
+void Minefield::Tile::draw(Graphics & gfx, bool isExploded) const
 {
+	if (!isExploded) {
 
-	switch (state) {
-	case State::Hidden:
-		SpriteCodex::drawTileButton(position, gfx);
-		break;
-	case State::Revealed:
-		if (hasMine()) {
-			SpriteCodex::drawTileBomb(position, gfx);
-		}
-		else {
-			switch (adjacentMines) {
-			case 0:
-				SpriteCodex::drawTile0(position, gfx);
-				break;
-			case 1:
-				SpriteCodex::drawTile1(position, gfx);
-				break;
-			case 2:
-				SpriteCodex::drawTile2(position, gfx);
-				break;
-			case 3:
-				SpriteCodex::drawTile3(position, gfx);
-				break;
-			case 4:
-				SpriteCodex::drawTile4(position, gfx);
-				break;
-			case 5:
-				SpriteCodex::drawTile5(position, gfx);
-				break;
-			case 6:
-				SpriteCodex::drawTile6(position, gfx);
-				break;
-			case 7:
-				SpriteCodex::drawTile7(position, gfx);
-				break;
-			case 8:
-				SpriteCodex::drawTile8(position, gfx);
-				break;
+		switch (state) {
+		case State::Hidden:
+			SpriteCodex::drawTileButton(position, gfx);
+			break;
+		case State::Revealed:
+			if (hasMine()) {
+				SpriteCodex::drawTileBomb(position, gfx);
 			}
+			else {
+				switch (adjacentMines) {
+				case 0:
+					SpriteCodex::drawTile0(position, gfx);
+					break;
+				case 1:
+					SpriteCodex::drawTile1(position, gfx);
+					break;
+				case 2:
+					SpriteCodex::drawTile2(position, gfx);
+					break;
+				case 3:
+					SpriteCodex::drawTile3(position, gfx);
+					break;
+				case 4:
+					SpriteCodex::drawTile4(position, gfx);
+					break;
+				case 5:
+					SpriteCodex::drawTile5(position, gfx);
+					break;
+				case 6:
+					SpriteCodex::drawTile6(position, gfx);
+					break;
+				case 7:
+					SpriteCodex::drawTile7(position, gfx);
+					break;
+				case 8:
+					SpriteCodex::drawTile8(position, gfx);
+					break;
+				}
+			}
+			break;
+		case State::Flagged:
+			SpriteCodex::drawTileButton(position, gfx);
+			SpriteCodex::drawTileFlag(position, gfx);
+			break;
 		}
-		break;
-	case State::Flagged:
-		SpriteCodex::drawTileButton(position, gfx);
-		SpriteCodex::drawTileFlag(position, gfx);
-		break;
+	}
+
+	else {
+		switch (state) {
+		case State::Hidden: {
+			if (hasMine()) {
+				SpriteCodex::drawTileBomb(position, gfx);
+			}
+			SpriteCodex::drawTileButton(position, gfx);
+			break;
+		}
+		case State::Revealed: {
+			if (hasMine()) {
+				SpriteCodex::drawTileBombRed(position, gfx);
+			}
+			else {
+				switch (adjacentMines) {
+				case 0:
+					SpriteCodex::drawTile0(position, gfx);
+					break;
+				case 1:
+					SpriteCodex::drawTile1(position, gfx);
+					break;
+				case 2:
+					SpriteCodex::drawTile2(position, gfx);
+					break;
+				case 3:
+					SpriteCodex::drawTile3(position, gfx);
+					break;
+				case 4:
+					SpriteCodex::drawTile4(position, gfx);
+					break;
+				case 5:
+					SpriteCodex::drawTile5(position, gfx);
+					break;
+				case 6:
+					SpriteCodex::drawTile6(position, gfx);
+					break;
+				case 7:
+					SpriteCodex::drawTile7(position, gfx);
+					break;
+				case 8:
+					SpriteCodex::drawTile8(position, gfx);
+					break;
+				}
+			}
+			}
+			break;
+		case State::Flagged: {
+			if (hasMine()) {
+				SpriteCodex::drawTileButton(position, gfx);
+				SpriteCodex::drawTileFlag(position, gfx);
+			}
+			else {
+				SpriteCodex::drawTileButton(position, gfx);
+				SpriteCodex::drawTileFlag(position, gfx);
+				SpriteCodex::drawTileCross(position, gfx);
+			}
+			break;
+		}
+		}
 	}
 }
 
@@ -89,11 +152,15 @@ void Minefield::Tile::spawnMine()
 	mine = true;
 }
 
-void Minefield::Tile::reveal()
+bool Minefield::Tile::reveal()
 {
 	if (state == State::Hidden) {
 		state = State::Revealed;
 	}
+	if (hasMine()) {
+		return false;
+	}
+	return true;
 }
 
 void Minefield::Tile::flag()
@@ -150,7 +217,7 @@ void Minefield::draw(Graphics & gfx)
 	gfx.DrawRect(background, SpriteCodex::baseColor);
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
-			field[y*width + x].draw(gfx);
+			field[y*width + x].draw(gfx, isExploded);
 		}
 	}
 }
@@ -165,16 +232,23 @@ Vei2 Minefield::getTileLocation(const Vei2& clickLocation) const
 
 void Minefield::revealTileAt(Vei2 & clickLocation)
 {
-	Vei2 tileLocation;
-	tileLocation = getTileLocation(clickLocation);
-	field[tileLocation.y * width + tileLocation.x].reveal();
+	if(!isExploded) {
+		Vei2 tileLocation;
+		tileLocation = getTileLocation(clickLocation);
+		bool okayReveal = field[tileLocation.y * width + tileLocation.x].reveal();
+		if (!okayReveal) {
+			isExploded = true;
+		}
+	}
 }
 
 void Minefield::flagTileAt(Vei2 & clickLocation)
 {
-	Vei2 tileLocation;
-	tileLocation = getTileLocation(clickLocation);
-	field[tileLocation.y * width + tileLocation.x].flag();
+	if (!isExploded) {
+		Vei2 tileLocation;
+		tileLocation = getTileLocation(clickLocation);
+		field[tileLocation.y * width + tileLocation.x].flag();
+	}
 }
 
 const Minefield::Tile & Minefield::tileAt(const Vei2 & tileLocation) const
