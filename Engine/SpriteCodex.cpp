@@ -1006,7 +1006,7 @@ void SpriteCodex::drawTileFlag( const Vei2& pos,Graphics& gfx )
 	gfx.PutPixel( 11 + pos.x,12 + pos.y,0,0,0 );
 }
 
-void SpriteCodex::drawTileBomb(const Vei2& pos, Graphics& gfx) {
+void SpriteCodex::drawTileMine(const Vei2& pos, Graphics& gfx) {
 
 	int x = pos.x;
 	int y = pos.y;
@@ -1269,7 +1269,7 @@ void SpriteCodex::drawTileBomb(const Vei2& pos, Graphics& gfx) {
 
 }
 
-void SpriteCodex::drawTileBombRed(const Vei2& pos, Graphics& gfx) {
+void SpriteCodex::drawTileMineRed(const Vei2& pos, Graphics& gfx) {
 	int x = pos.x;
 	int y = pos.y;
 

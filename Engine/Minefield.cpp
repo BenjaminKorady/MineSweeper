@@ -28,7 +28,7 @@ void Minefield::Tile::draw(Graphics & gfx, bool isExploded) const
 			break;
 		case State::Revealed:
 			if (hasMine()) {
-				SpriteCodex::drawTileBomb(position, gfx);
+				SpriteCodex::drawTileMine(position, gfx);
 			}
 			else {
 				switch (adjacentMines) {
@@ -73,14 +73,14 @@ void Minefield::Tile::draw(Graphics & gfx, bool isExploded) const
 		switch (state) {
 		case State::Hidden: {
 			if (hasMine()) {
-				SpriteCodex::drawTileBomb(position, gfx);
+				SpriteCodex::drawTileMine(position, gfx);
 			}
 			SpriteCodex::drawTileButton(position, gfx);
 			break;
 		}
 		case State::Revealed: {
 			if (hasMine()) {
-				SpriteCodex::drawTileBombRed(position, gfx);
+				SpriteCodex::drawTileMineRed(position, gfx);
 			}
 			else {
 				switch (adjacentMines) {

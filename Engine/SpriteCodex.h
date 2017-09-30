@@ -23,6 +23,6 @@ public:
 	static void drawTileButton( const Vei2& pos,Graphics& gfx );
 	static void drawTileCross( const Vei2& pos,Graphics& gfx );
 	static void drawTileFlag( const Vei2& pos,Graphics& gfx );
-	static void drawTileBomb( const Vei2& pos,Graphics& gfx );
-	static void drawTileBombRed( const Vei2& pos,Graphics& gfx );
+	static void drawTileMine( const Vei2& pos,Graphics& gfx );
+	static void drawTileMineRed( const Vei2& pos,Graphics& gfx );
 };
