@@ -2,6 +2,7 @@
 
 #include "Graphics.h"
 #include "Vei2.h"
+
 class Minefield {
 private:
 	class Tile {
@@ -37,6 +38,8 @@ public:
 	void draw(Graphics& gfx);
 	void revealTileAt(Vei2& clickLocation);
 	void flagTileAt(Vei2& clickLocation);
+	const Tile& tileAt(Vei2& tileLocation) const;
+	Tile& tileAt(Vei2& tileLocation);
 	static constexpr int width = 20;
 	static constexpr int height = 15;
 
