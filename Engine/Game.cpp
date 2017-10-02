@@ -41,7 +41,7 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-//	if (gameState == State::Playing) {
+	if (gameState == State::Playing) {
 		if (minefield.isExploded) {
 			gameState = State::Loss;
 		}
@@ -57,15 +57,25 @@ void Game::UpdateModel()
 				minefield.flagTileAt(e.GetPos());
 			}
 		}
-
-
-
-	//}
-/*
-	else if (gameState == State::Loss || gameState == State::Win) {
-	//	if(wnd.kbd)
 	}
-	*/
+
+	else if (gameState == State::Loss || gameState == State::Win) {
+		while (!wnd.kbd.KeyIsEmpty()) {
+			const Keyboard::Event e = wnd.kbd.ReadKey();
+			if (e.IsRelease()) {
+				if (e.GetCode() == VK_RETURN) {
+					restartGame();
+				}
+			}
+		}
+	}
+	
+}
+
+void Game::restartGame()
+{
+	gameState = State::Playing;
+	minefield.restart();
 }
 
 void Game::ComposeFrame()

@@ -25,6 +25,7 @@ private:
 		void flag();
 		State getState() const;
 		bool hasMine() const;
+		void restart();
 
 
 		static constexpr int width = 16;
@@ -48,6 +49,7 @@ public:
 	Tile& tileAt(const Vei2& tileLocation);
 	bool revealedAll() const;
 	bool isExploded = false;
+	void restart();
 
 	static constexpr int width = 10;
 	static constexpr int height = 5;

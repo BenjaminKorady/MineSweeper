@@ -182,37 +182,18 @@ bool Minefield::Tile::hasMine() const
 	return mine;
 }
 
+void Minefield::Tile::restart()
+{
+	state = State::Hidden;
+	mine = false;
+}
+
 Minefield::Minefield(int nMinesIn)
 	:
 	nMines(nMinesIn)
 {
 	assert(nMines > 0 && nMines < width*height);
-	std::random_device rd;
-	std::mt19937 rng(rd());
-	std::uniform_int_distribution<int> xDist(0, width - 1);
-	std::uniform_int_distribution<int> yDist(0, height - 1);
-
-	for (int y = 0; y < height; ++y) {
-		for (int x = 0; x < width; ++x) {
-			field[y*width + x].setPosition(Vei2(x*Tile::width, y*Tile::width));
-		}
-	}
-
-	for (int spawnedMines = 0; spawnedMines < nMinesIn; ++spawnedMines) {
-		Vei2 spawnPosition;
-		do {
-			spawnPosition = { xDist(rng), yDist(rng) };
-		} while (tileAt(spawnPosition).hasMine());
-		tileAt(spawnPosition).spawnMine();
-	}
-
-	for (int y = 0; y < height; ++y) {
-		for (int x = 0; x < width; ++x) {
-			int n = getAdjacentMines(field[y*width + x]);
-			field[y*width + x].setAdjacentMines(n);
-		}
-	}
-
+	restart();
 }
 
 void Minefield::draw(Graphics & gfx)
@@ -277,6 +258,39 @@ bool Minefield::revealedAll() const
 	int nonMineTiles = width*height - nMines;
 	assert(revealedCounter <= nonMineTiles);
 	return revealedCounter == nonMineTiles;
+}
+
+void Minefield::restart()
+{
+	isExploded = false;
+	std::random_device rd;
+	std::mt19937 rng(rd());
+	std::uniform_int_distribution<int> xDist(0, width - 1);
+	std::uniform_int_distribution<int> yDist(0, height - 1);
+
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			field[y*width + x].restart();
+			field[y*width + x].setPosition(Vei2(x*Tile::width, y*Tile::width));
+		}
+	}
+
+	for (int spawnedMines = 0; spawnedMines < nMines; ++spawnedMines) {
+		Vei2 spawnPosition;
+		do {
+			spawnPosition = { xDist(rng), yDist(rng) };
+		} while (tileAt(spawnPosition).hasMine());
+		tileAt(spawnPosition).spawnMine();
+	}
+
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			int n = getAdjacentMines(field[y*width + x]);
+			field[y*width + x].setAdjacentMines(n);
+		}
+	}
+
+	revealedCounter = 0;
 }
 
 int Minefield::getAdjacentMines(const Tile& tileIn) const
