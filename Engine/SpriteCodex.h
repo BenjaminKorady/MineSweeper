@@ -25,4 +25,7 @@ public:
 	static void drawTileFlag( const Vei2& pos,Graphics& gfx );
 	static void drawTileMine( const Vei2& pos,Graphics& gfx );
 	static void drawTileMineRed( const Vei2& pos,Graphics& gfx );
+
+	static void drawGameWin(Graphics& gfx);
+	static void drawGameLoss(Graphics& gfx);
 };

@@ -154,9 +154,8 @@ void Minefield::Tile::spawnMine()
 
 bool Minefield::Tile::reveal()
 {
-	if (state == State::Hidden) {
-		state = State::Revealed;
-	}
+	assert(state == State::Hidden);
+	state = State::Revealed;
 	if (hasMine()) {
 		return false;
 	}
@@ -171,6 +170,11 @@ void Minefield::Tile::flag()
 	else if (state == State::Flagged) {
 		state = State::Hidden;
 	}
+}
+
+Minefield::Tile::State Minefield::Tile::getState() const
+{
+	return state;
 }
 
 bool Minefield::Tile::hasMine() const
@@ -235,9 +239,16 @@ void Minefield::revealTileAt(Vei2 & clickLocation)
 	if(!isExploded) {
 		Vei2 tileLocation;
 		tileLocation = getTileLocation(clickLocation);
-		bool okayReveal = field[tileLocation.y * width + tileLocation.x].reveal();
-		if (!okayReveal) {
-			isExploded = true;
+		Tile& tileAtLocation = field[tileLocation.y * width + tileLocation.x];
+
+		if (tileAtLocation.getState() == Minefield::Tile::State::Hidden) {
+			bool okayReveal = tileAtLocation.reveal();
+			if (!okayReveal) {
+				isExploded = true;
+			}
+			else {
+				++revealedCounter;
+			}
 		}
 	}
 }
@@ -259,6 +270,13 @@ const Minefield::Tile & Minefield::tileAt(const Vei2 & tileLocation) const
 Minefield::Tile & Minefield::tileAt(const Vei2 & tileLocation)
 {
 	return field[tileLocation.y * width + tileLocation.x];
+}
+
+bool Minefield::revealedAll() const
+{
+	int nonMineTiles = width*height - nMines;
+	assert(revealedCounter <= nonMineTiles);
+	return revealedCounter == nonMineTiles;
 }
 
 int Minefield::getAdjacentMines(const Tile& tileIn) const

@@ -23,6 +23,7 @@ private:
 		void spawnMine();
 		bool reveal();
 		void flag();
+		State getState() const;
 		bool hasMine() const;
 
 
@@ -45,6 +46,8 @@ public:
 	void flagTileAt(Vei2& clickLocation);
 	const Tile& tileAt(const Vei2& tileLocation) const;
 	Tile& tileAt(const Vei2& tileLocation);
+	bool revealedAll() const;
+	bool isExploded = false;
 
 	static constexpr int width = 10;
 	static constexpr int height = 5;
@@ -55,7 +58,7 @@ private:
 	int nMines;
 	Vei2 getTileLocation(const Vei2& clickLocation) const;
 	int getAdjacentMines(const Tile& tileIn) const;
-	bool isExploded = false;
+	int revealedCounter = 0;
 
 
 

@@ -20,11 +20,13 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
+#include "SpriteCodex.h"
 
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
+	gameState( State::Playing ),
 	minefield(7)
 {
 }
@@ -39,18 +41,41 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	while (!wnd.mouse.IsEmpty()) {
-		const Mouse::Event e = wnd.mouse.Read();
-		if (e.GetType() == Mouse::Event::Type::LPress) 	{
-			minefield.revealTileAt(e.GetPos());
+//	if (gameState == State::Playing) {
+		if (minefield.isExploded) {
+			gameState = State::Loss;
 		}
-		else if (e.GetType() == Mouse::Event::Type::RPress) {
-			minefield.flagTileAt(e.GetPos());
+		else if (minefield.revealedAll()) {
+			gameState = State::Win;
 		}
+		while (!wnd.mouse.IsEmpty()) {
+			const Mouse::Event e = wnd.mouse.Read();
+			if (e.GetType() == Mouse::Event::Type::LPress) {
+				minefield.revealTileAt(e.GetPos());
+			}
+			else if (e.GetType() == Mouse::Event::Type::RPress) {
+				minefield.flagTileAt(e.GetPos());
+			}
+		}
+
+
+
+	//}
+/*
+	else if (gameState == State::Loss || gameState == State::Win) {
+	//	if(wnd.kbd)
 	}
+	*/
 }
 
 void Game::ComposeFrame()
 {
 	minefield.draw(gfx);
+
+	if (gameState == State::Win) {
+		SpriteCodex::drawGameWin(gfx);
+	}
+	else if (gameState == State::Loss) {
+		SpriteCodex::drawGameLoss(gfx);
+	}
 }

@@ -28,6 +28,12 @@
 class Game
 {
 public:
+	enum class State {
+		Playing,
+		Win,
+		Loss
+	};
+public:
 	Game( class MainWindow& wnd );
 	Game( const Game& ) = delete;
 	Game& operator=( const Game& ) = delete;
@@ -45,4 +51,5 @@ private:
 	/*  User Variables              */
 	/********************************/
 	Minefield minefield;
+	State gameState;
 };
