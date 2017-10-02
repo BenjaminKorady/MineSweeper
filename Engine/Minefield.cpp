@@ -198,8 +198,7 @@ Minefield::Minefield(int nMinesIn)
 
 void Minefield::draw(Graphics & gfx)
 {
-	RectI background(position, width*Tile::width, height*Tile::height);
-	gfx.DrawRect(background, SpriteCodex::baseColor);
+	gfx.DrawRect(rectangle, SpriteCodex::baseColor);
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
 			field[y*width + x].draw(gfx, isExploded);
@@ -207,19 +206,30 @@ void Minefield::draw(Graphics & gfx)
 	}
 }
 
-Vei2 Minefield::getTileLocation(const Vei2& clickLocation) const
+Vei2 Minefield::getTileLocation(const Vei2& globalLocation) const
 {
+	assert(rectangle.ContainsPoint(globalLocation));
 	Vei2 tileLocation;
-	tileLocation.x = clickLocation.x / Tile::width;
-	tileLocation.y = clickLocation.y / Tile::height;
+	tileLocation.x = (globalLocation.x - field[0].getPosition().x) / Tile::width;
+	tileLocation.y = (globalLocation.y - field[0].getPosition().y) / Tile::height;
 	return tileLocation;
 }
 
-void Minefield::revealTileAt(Vei2 & clickLocation)
+Vei2 Minefield::getTileLocalPosition(const Vei2 & globalPosition) const
+{
+	return Vei2();
+}
+
+bool Minefield::tileExistsAtLocation(const Vei2& globalLocation) const
+{
+	return rectangle.ContainsPoint(globalLocation);
+}
+
+void Minefield::revealTileAt(Vei2 & globalLocation)
 {
 	if(!isExploded) {
 		Vei2 tileLocation;
-		tileLocation = getTileLocation(clickLocation);
+		tileLocation = getTileLocation(globalLocation);
 		Tile& tileAtLocation = field[tileLocation.y * width + tileLocation.x];
 
 		if (tileAtLocation.getState() == Minefield::Tile::State::Hidden) {
@@ -234,11 +244,11 @@ void Minefield::revealTileAt(Vei2 & clickLocation)
 	}
 }
 
-void Minefield::flagTileAt(Vei2 & clickLocation)
+void Minefield::flagTileAt(Vei2 & globalLocation)
 {
 	if (!isExploded) {
 		Vei2 tileLocation;
-		tileLocation = getTileLocation(clickLocation);
+		tileLocation = getTileLocation(globalLocation);
 		field[tileLocation.y * width + tileLocation.x].flag();
 	}
 }
@@ -268,12 +278,17 @@ void Minefield::restart()
 	std::uniform_int_distribution<int> xDist(0, width - 1);
 	std::uniform_int_distribution<int> yDist(0, height - 1);
 
+	Vei2 centerTopLeft = { (Graphics::ScreenWidth - width * Tile::width) / 2, (Graphics::ScreenHeight - height * Tile::height) / 2 };
+
 	for (int y = 0; y < height; ++y) {
 		for (int x = 0; x < width; ++x) {
 			field[y*width + x].restart();
-			field[y*width + x].setPosition(Vei2(x*Tile::width, y*Tile::width));
+			field[y*width + x].setPosition(Vei2(x*Tile::width + centerTopLeft.x, y*Tile::width + centerTopLeft.y));
 		}
 	}
+
+	rectangle = RectI(field[0].getPosition(), width*Tile::width, height*Tile::height);
+
 
 	for (int spawnedMines = 0; spawnedMines < nMines; ++spawnedMines) {
 		Vei2 spawnPosition;
@@ -295,7 +310,7 @@ void Minefield::restart()
 
 int Minefield::getAdjacentMines(const Tile& tileIn) const
 {
-
+	
 	Vei2 checkStart;
 	Vei2 checkEnd;
 

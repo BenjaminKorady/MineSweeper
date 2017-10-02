@@ -30,6 +30,7 @@ private:
 
 		static constexpr int width = 16;
 		static constexpr int height	 = 16;
+
 	private:
 
 		Vei2 position;
@@ -43,12 +44,13 @@ public:
 	Minefield(int nMines);
     
 	void draw(Graphics& gfx);
-	void revealTileAt(Vei2& clickLocation);
-	void flagTileAt(Vei2& clickLocation);
+	void revealTileAt(Vei2& globalLocation);
+	void flagTileAt(Vei2& globalLocation);
 	const Tile& tileAt(const Vei2& tileLocation) const;
 	Tile& tileAt(const Vei2& tileLocation);
 	bool revealedAll() const;
 	bool isExploded = false;
+	bool tileExistsAtLocation(const Vei2& globalLocation) const;
 	void restart();
 
 	static constexpr int width = 10;
@@ -58,9 +60,11 @@ private:
 	Tile field[width*height];
 	Vei2 position = Vei2(0, 0);
 	int nMines;
-	Vei2 getTileLocation(const Vei2& clickLocation) const;
+	Vei2 getTileLocation(const Vei2& globalPosition) const;
+	Vei2 getTileLocalPosition(const Vei2& globalPosition) const;
 	int getAdjacentMines(const Tile& tileIn) const;
 	int revealedCounter = 0;
+	RectI rectangle;
 
 
 

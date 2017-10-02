@@ -51,10 +51,15 @@ void Game::UpdateModel()
 		while (!wnd.mouse.IsEmpty()) {
 			const Mouse::Event e = wnd.mouse.Read();
 			if (e.GetType() == Mouse::Event::Type::LPress) {
-				minefield.revealTileAt(e.GetPos());
+				
+				if (minefield.tileExistsAtLocation(e.GetPos())) {
+					minefield.revealTileAt(e.GetPos());
+				}
 			}
 			else if (e.GetType() == Mouse::Event::Type::RPress) {
-				minefield.flagTileAt(e.GetPos());
+				if (minefield.tileExistsAtLocation(e.GetPos())) {
+					minefield.flagTileAt(e.GetPos());
+				}
 			}
 		}
 	}
