@@ -146,20 +146,21 @@ void Minefield::Tile::setAdjacentMines(int in)
 	adjacentMines = in;
 }
 
+int Minefield::Tile::getAdjacentMines() const
+{
+	return adjacentMines;
+}
+
 void Minefield::Tile::spawnMine()
 {
 	assert(mine == false);
 	mine = true;
 }
 
-bool Minefield::Tile::reveal()
+void Minefield::Tile::reveal()
 {
 	assert(state == State::Hidden);
 	state = State::Revealed;
-	if (hasMine()) {
-		return false;
-	}
-	return true;
 }
 
 void Minefield::Tile::flag()
@@ -215,11 +216,6 @@ Vei2 Minefield::getTileLocation(const Vei2& globalLocation) const
 	return tileLocation;
 }
 
-Vei2 Minefield::getTileLocalPosition(const Vei2 & globalPosition) const
-{
-	return Vei2();
-}
-
 bool Minefield::tileExistsAtLocation(const Vei2& globalLocation) const
 {
 	return rectangle.ContainsPoint(globalLocation);
@@ -233,12 +229,43 @@ void Minefield::revealTileAt(Vei2 & globalLocation)
 		Tile& tileAtLocation = field[tileLocation.y * width + tileLocation.x];
 
 		if (tileAtLocation.getState() == Minefield::Tile::State::Hidden) {
-			bool okayReveal = tileAtLocation.reveal();
+			bool okayReveal = !tileAtLocation.hasMine();
 			if (!okayReveal) {
 				isExploded = true;
 			}
-			else {
-				++revealedCounter;
+			revealRecursively(tileAtLocation);
+		}
+	}
+}
+
+void Minefield::revealRecursively(Tile & tileIn)
+{
+	if (tileIn.getState() == Tile::State::Hidden) {
+		tileIn.reveal();
+		++revealedCounter;
+
+		if (tileIn.getAdjacentMines() != 0) {
+			return;
+		}
+		else {
+
+			Vei2 revealStart;
+			Vei2 revealEnd;
+
+			Vei2 tileLocal = getTileLocation(tileIn.getPosition());
+
+			revealStart.x = std::max(0, tileLocal.x - 1);
+			revealEnd.x = std::min(tileLocal.x + 1, width - 1);
+			revealStart.y = std::max(0, tileLocal.y - 1);
+			revealEnd.y = std::min(tileLocal.y + 1, height - 1);
+
+			int mineCounter = 0;
+
+			for (int y = revealStart.y; y <= revealEnd.y; ++y) {
+				for (int x = revealStart.x; x <= revealEnd.x; ++x) {
+					Tile& adjacentTile = field[y*width + x];
+					revealRecursively(adjacentTile);
+				}
 			}
 		}
 	}

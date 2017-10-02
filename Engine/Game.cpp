@@ -27,7 +27,7 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd ),
 	gameState( State::Playing ),
-	minefield(7)
+	minefield(20)
 {
 }
 

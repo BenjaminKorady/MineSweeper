@@ -20,8 +20,9 @@ private:
 		Vei2 getPosition() const;
 		void setPosition(Vei2 posIn);
 		void setAdjacentMines(int in);
+		int getAdjacentMines() const;
 		void spawnMine();
-		bool reveal();
+		void reveal();
 		void flag();
 		State getState() const;
 		bool hasMine() const;
@@ -45,6 +46,7 @@ public:
     
 	void draw(Graphics& gfx);
 	void revealTileAt(Vei2& globalLocation);
+	void revealRecursively(Tile& tileIn);
 	void flagTileAt(Vei2& globalLocation);
 	const Tile& tileAt(const Vei2& tileLocation) const;
 	Tile& tileAt(const Vei2& tileLocation);
@@ -53,8 +55,8 @@ public:
 	bool tileExistsAtLocation(const Vei2& globalLocation) const;
 	void restart();
 
-	static constexpr int width = 10;
-	static constexpr int height = 5;
+	static constexpr int width = 20;
+	static constexpr int height = 15;
 
 private:
 	Tile field[width*height];
