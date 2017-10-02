@@ -46,8 +46,8 @@ public:
 	const Tile& tileAt(const Vei2& tileLocation) const;
 	Tile& tileAt(const Vei2& tileLocation);
 
-	static constexpr int width = 20;
-	static constexpr int height = 15;
+	static constexpr int width = 10;
+	static constexpr int height = 5;
 
 private:
 	Tile field[width*height];
