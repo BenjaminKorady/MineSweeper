@@ -55,8 +55,8 @@ public:
 	bool tileExistsAtLocation(const Vei2& globalLocation) const;
 	void restart();
 
-	static constexpr int width = 20;
-	static constexpr int height = 15;
+	static constexpr int width = 16;
+	static constexpr int height = 16;
 
 private:
 	Tile field[width*height];
