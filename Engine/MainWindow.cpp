@@ -180,6 +180,7 @@ LRESULT MainWindow::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 				mouse.OnMouseLeave();
 				mouse.OnLeftReleased( pt.x,pt.y );
 				mouse.OnRightReleased( pt.x,pt.y );
+				mouse.OnMiddleReleased(pt.x, pt.y);
 			}
 		}
 		break;
@@ -194,6 +195,17 @@ LRESULT MainWindow::HandleMsg( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 	{
 		const POINTS pt = MAKEPOINTS( lParam );
 		mouse.OnRightPressed( pt.x,pt.y );
+		break;
+	}
+	case WM_MBUTTONDOWN: {
+		const POINTS pt = MAKEPOINTS(lParam);
+		mouse.OnMiddlePressed(pt.x, pt.y);
+		break;
+	}
+	case WM_MBUTTONUP:
+	{
+		const POINTS pt = MAKEPOINTS(lParam);
+		mouse.OnMiddleReleased(pt.x, pt.y);
 		break;
 	}
 	case WM_LBUTTONUP:

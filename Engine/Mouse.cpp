@@ -47,6 +47,11 @@ bool Mouse::RightIsPressed() const
 	return rightIsPressed;
 }
 
+bool Mouse::MiddleIsPressed() const
+{
+	return middleIsPressed;
+}
+
 bool Mouse::IsInWindow() const
 {
 	return isInWindow;
@@ -119,6 +124,22 @@ void Mouse::OnRightReleased( int x,int y )
 	rightIsPressed = false;
 
 	buffer.push( Mouse::Event( Mouse::Event::Type::RRelease,*this ) );
+	TrimBuffer();
+}
+
+void Mouse::OnMiddlePressed(int x, int y)
+{
+	middleIsPressed = true;
+
+	buffer.push(Mouse::Event(Mouse::Event::Type::MPress, *this));
+	TrimBuffer();
+}
+
+void Mouse::OnMiddleReleased(int x, int y)
+{
+	middleIsPressed = true;
+
+	buffer.push(Mouse::Event(Mouse::Event::Type::MRelease, *this));
 	TrimBuffer();
 }
 
