@@ -31,7 +31,8 @@ public:
 	enum class State {
 		Playing,
 		Win,
-		Loss
+		Loss,
+		InMenu
 	};
 public:
 	Game( class MainWindow& wnd );

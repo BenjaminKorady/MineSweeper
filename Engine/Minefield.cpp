@@ -271,6 +271,48 @@ void Minefield::revealRecursively(Tile & tileIn)
 	}
 }
 
+bool Minefield::revealSurrounding(Tile & tileIn)
+{
+	assert(tileIn.getState() == Tile::State::Revealed);
+
+	Vei2 revealStart;
+	Vei2 revealEnd;
+
+	Vei2 tileLocal = getTileLocation(tileIn.getPosition());
+
+	revealStart.x = std::max(0, tileLocal.x - 1);
+	revealEnd.x = std::min(tileLocal.x + 1, width - 1);
+	revealStart.y = std::max(0, tileLocal.y - 1);
+	revealEnd.y = std::min(tileLocal.y + 1, height - 1);
+
+	int mineCounter = 0;
+
+	// Count flagged
+	int flaggedCounter = 0;
+	for (int y = revealStart.y; y <= revealEnd.y; ++y) {
+		for (int x = revealStart.x; x <= revealEnd.x; ++x) {
+			Tile& adjacentTile = field[y*width + x];
+			if (adjacentTile.getState() == Tile::State::Flagged) {
+				++flaggedCounter;
+			}
+		}
+	}
+
+	// It's okay to reveal surrounding mines
+	if (flaggedCounter == tileIn.getAdjacentMines()) {
+		for (int y = revealStart.y; y <= revealEnd.y; ++y) {
+			for (int x = revealStart.x; x <= revealEnd.x; ++x) {
+				Tile& adjacentTile = field[y*width + x];
+				adjacentTile.reveal();
+			}
+		}
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 void Minefield::flagTileAt(Vei2 & globalLocation)
 {
 	if (!isExploded) {

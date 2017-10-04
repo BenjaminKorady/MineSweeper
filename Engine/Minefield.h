@@ -47,6 +47,7 @@ public:
 	void draw(Graphics& gfx);
 	void revealTileAt(Vei2& globalLocation);
 	void revealRecursively(Tile& tileIn);
+	bool revealSurrounding(Tile& tileIn);
 	void flagTileAt(Vei2& globalLocation);
 	const Tile& tileAt(const Vei2& tileLocation) const;
 	Tile& tileAt(const Vei2& tileLocation);
@@ -63,7 +64,6 @@ private:
 	Vei2 position = Vei2(0, 0);
 	int nMines;
 	Vei2 getTileLocation(const Vei2& globalPosition) const;
-	Vei2 getTileLocalPosition(const Vei2& globalPosition) const;
 	int getAdjacentMines(const Tile& tileIn) const;
 	int revealedCounter = 0;
 	RectI rectangle;
