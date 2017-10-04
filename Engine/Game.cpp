@@ -62,7 +62,9 @@ void Game::UpdateModel()
 				}
 			}
 			else if (e.GetType() == Mouse::Event::Type::MRelease) {
-
+				if (minefield.tileExistsAtLocation(e.GetPos())) {
+					minefield.revealOrFlagAt(e.GetPos());
+				}
 			}
 		}
 	}

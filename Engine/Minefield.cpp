@@ -242,8 +242,13 @@ void Minefield::revealRecursively(Tile & tileIn)
 {
 	if (tileIn.getState() == Tile::State::Hidden) {
 		tileIn.reveal();
-		++revealedCounter;
-
+		if (tileIn.hasMine()) {
+			isExploded = true;
+			return;
+		}
+		else {
+			++revealedCounter;
+		}
 		if (tileIn.getAdjacentMines() != 0) {
 			return;
 		}
@@ -273,8 +278,6 @@ void Minefield::revealRecursively(Tile & tileIn)
 
 bool Minefield::revealSurrounding(Tile & tileIn)
 {
-	assert(tileIn.getState() == Tile::State::Revealed);
-
 	Vei2 revealStart;
 	Vei2 revealEnd;
 
@@ -303,13 +306,28 @@ bool Minefield::revealSurrounding(Tile & tileIn)
 		for (int y = revealStart.y; y <= revealEnd.y; ++y) {
 			for (int x = revealStart.x; x <= revealEnd.x; ++x) {
 				Tile& adjacentTile = field[y*width + x];
-				adjacentTile.reveal();
+				if(adjacentTile.getState() == Tile::State::Hidden) {
+					revealRecursively(adjacentTile);
+				}
 			}
 		}
 		return true;
 	}
 	else {
 		return false;
+	}
+}
+
+void Minefield::revealOrFlagAt(Vei2 & globalLocation)
+{
+	Vei2 tileLocation;
+	tileLocation = getTileLocation(globalLocation);
+	Tile& tileIn = tileAt(tileLocation);
+	if (tileIn.getState() == Tile::State::Revealed) {
+		revealSurrounding(tileIn);
+	}
+	else if (tileIn.getState() == Tile::State::Hidden || tileIn.getState() == Tile::State::Flagged) {
+		tileIn.flag();
 	}
 }
 
