@@ -1,5 +1,5 @@
-/****************************************************************************************** 
- *	Chili DirectX Framework Version 16.07.20											  *	
+/******************************************************************************************
+ *	Chili DirectX Framework Version 16.07.20											  *
  *	Game.cpp																			  *
  *	Copyright 2016 PlanetChili.net <http://www.planetchili.net>							  *
  *																						  *
@@ -22,18 +22,18 @@
 #include "Game.h"
 #include "SpriteCodex.h"
 
-Game::Game( MainWindow& wnd )
+Game::Game(MainWindow& wnd)
 	:
-	wnd( wnd ),
-	gfx( wnd ),
-	gameState( State::Playing ),
+	wnd(wnd),
+	gfx(wnd),
+	gameState(State::InMenu),
 	minefield(40)
 {
 }
 
 void Game::Go()
 {
-	gfx.BeginFrame();	
+	gfx.BeginFrame();
 	UpdateModel();
 	ComposeFrame();
 	gfx.EndFrame();
@@ -41,35 +41,48 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	if (gameState == State::Playing) {
-		if (minefield.isExploded) {
-			gameState = State::Loss;
-		}
-		else if (minefield.revealedAll()) {
-			gameState = State::Win;
-		}
-		while (!wnd.mouse.IsEmpty()) {
-			const Mouse::Event e = wnd.mouse.Read();
-			if (e.GetType() == Mouse::Event::Type::LRelease) {
+	switch (gameState) {
 
-				if (minefield.tileExistsAtLocation(e.GetPos())) {
-					minefield.revealTileAt(e.GetPos());
-				}
+	case State::Playing: {
+			if (minefield.isExploded) {
+				gameState = State::Loss;
 			}
-			else if (e.GetType() == Mouse::Event::Type::RRelease) {
-				if (minefield.tileExistsAtLocation(e.GetPos())) {
-					minefield.flagTileAt(e.GetPos());
-				}
+			else if (minefield.revealedAll()) {
+				gameState = State::Win;
 			}
-			else if (e.GetType() == Mouse::Event::Type::MRelease) {
-				if (minefield.tileExistsAtLocation(e.GetPos())) {
-					minefield.revealOrFlagAt(e.GetPos());
-				}
-			}
-		}
-	}
 
-	else if (gameState == State::Loss || gameState == State::Win) {
+			while (!wnd.mouse.IsEmpty()) {
+				const Mouse::Event e = wnd.mouse.Read();
+				if (e.GetType() == Mouse::Event::Type::LRelease) {
+					if (minefield.tileExistsAtLocation(e.GetPos())) {
+						minefield.revealTileAt(e.GetPos());
+					}
+				}
+				else if (e.GetType() == Mouse::Event::Type::RRelease) {
+					if (minefield.tileExistsAtLocation(e.GetPos())) {
+						minefield.flagTileAt(e.GetPos());
+					}
+				}
+				else if (e.GetType() == Mouse::Event::Type::MRelease) {
+					if (minefield.tileExistsAtLocation(e.GetPos())) {
+						minefield.revealOrFlagAt(e.GetPos());
+					}
+				}
+			}
+			while (!wnd.kbd.KeyIsEmpty()) {
+				const Keyboard::Event e = wnd.kbd.ReadKey();
+				if (e.IsPress()) {
+					if (e.GetCode() == VK_SPACE) {
+						const Vei2 pos = wnd.mouse.GetPos();
+						if (minefield.tileExistsAtLocation(pos)) {
+							minefield.revealOrFlagAt(pos);
+						}
+					}
+				}
+			}
+		} break;
+						
+	case State::Loss: {
 		while (!wnd.kbd.KeyIsEmpty()) {
 			const Keyboard::Event e = wnd.kbd.ReadKey();
 			if (e.IsRelease()) {
@@ -78,6 +91,24 @@ void Game::UpdateModel()
 				}
 			}
 		}
+	} break;
+				
+	case State::Win:{
+		while (!wnd.kbd.KeyIsEmpty()) {
+			const Keyboard::Event e = wnd.kbd.ReadKey();
+			if (e.IsRelease()) {
+				if (e.GetCode() == VK_RETURN) {
+					restartGame();
+				}
+			}
+		}
+
+					  } break;
+			
+	case State::InMenu:{
+		
+	}  break;
+		
 	}
 	
 }
@@ -88,14 +119,68 @@ void Game::restartGame()
 	minefield.restart();
 }
 
+void Game::drawMenu(int highlightOption)
+{
+	const int menuOptions = 4;
+	const int maxSpriteHeight = 55;	// only on glow
+	const Vei2 center = { Graphics::ScreenWidth / 2, Graphics::ScreenHeight / 2 };
+
+	const Vei2 beginnerSize = { 111, 25 };
+	const Vei2 intermediateSize = { 160, 20 };
+	const Vei2 expertSize = { 83, 25 };
+	const Vei2 customSize = { 89, 19 };
+
+	switch (highlightOption) {
+	case 0: 
+		SpriteCodex::drawBeginnerGlow(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx); 
+		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
+		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
+		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
+		break;
+	case 1:
+		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
+		SpriteCodex::drawIntermediateGlow(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
+		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
+		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
+		break;
+	case 2:
+		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
+		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
+		SpriteCodex::drawExpertGlow(center.x - expertSize.x / 2, center.y, gfx);
+		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
+		break;
+	case 3: 
+		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
+		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
+		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
+		SpriteCodex::drawCustomGlow(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
+		break;
+	default:
+		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
+		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
+		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
+		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
+		break;
+	}
+
+
+}
+
 void Game::ComposeFrame()
 {
-	minefield.draw(gfx);
+	if (gameState == State::InMenu) {
+		drawMenu(highlightMenuOption);
+	}
+	else {
+		minefield.draw(gfx);
+	}
 
-	if (gameState == State::Win) {
-		SpriteCodex::drawGameWin(gfx);
+	switch (gameState) {
+
+	case State::Win: 		
+		SpriteCodex::drawGameWin(gfx); break;
+	case State::Loss:
+		SpriteCodex::drawGameLoss(gfx); break;
 	}
-	else if (gameState == State::Loss) {
-		SpriteCodex::drawGameLoss(gfx);
-	}
+
 }

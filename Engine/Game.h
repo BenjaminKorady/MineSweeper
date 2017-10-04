@@ -46,12 +46,14 @@ private:
 	/*  User Functions              */
 	/********************************/
 	void restartGame();
+	void drawMenu(int highlightOption);
 private:
 	MainWindow& wnd;
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
 	/********************************/
+	int highlightMenuOption = 0;
 	Minefield minefield;
 	State gameState;
 };

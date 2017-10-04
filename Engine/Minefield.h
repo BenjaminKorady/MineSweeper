@@ -48,7 +48,7 @@ public:
 	void revealTileAt(Vei2& globalLocation);
 	void revealRecursively(Tile& tileIn);
 	bool revealSurrounding(Tile& tileIn);
-	void revealOrFlagAt(Vei2& globalLocation);
+	void revealOrFlagAt(const Vei2& globalLocation);
 	void flagTileAt(Vei2& globalLocation);
 	const Tile& tileAt(const Vei2& tileLocation) const;
 	Tile& tileAt(const Vei2& tileLocation);

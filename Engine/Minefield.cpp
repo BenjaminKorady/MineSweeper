@@ -318,7 +318,7 @@ bool Minefield::revealSurrounding(Tile & tileIn)
 	}
 }
 
-void Minefield::revealOrFlagAt(Vei2 & globalLocation)
+void Minefield::revealOrFlagAt(const Vei2 & globalLocation)
 {
 	Vei2 tileLocation;
 	tileLocation = getTileLocation(globalLocation);
