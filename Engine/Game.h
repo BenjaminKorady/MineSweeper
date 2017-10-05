@@ -68,6 +68,7 @@ public:
 		void Draw(Graphics& gfx);
 		Option::Name getSelectedOption() const;
 		void highlightOption(Option::Name optionIn);
+		void selectOption(Option::Name optionIn);
 		Option::Name PointIsOverOption(Vei2 pointIn) const;
 	private:
 		const int Game::Menu::getItemSizeX() const;

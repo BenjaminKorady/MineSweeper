@@ -107,10 +107,21 @@ void Game::UpdateModel()
 					  } break;
 			
 	case State::InMenu:{
-		while (!wnd.mouse.IsEmpty()) {
-			lastMousePos = wnd.mouse.Read().GetPos();
+		if (menu.getSelectedOption() == Menu::Option::Name::None) {
+			while (!wnd.mouse.IsEmpty()) {
+				const Mouse::Event e = wnd.mouse.Read();
+				lastMousePos = e.GetPos();
+
+				if (e.GetType() == Mouse::Event::Type::LRelease) {
+					menu.selectOption(menu.PointIsOverOption(lastMousePos));
+				}
+			}
+			menu.highlightOption(menu.PointIsOverOption(lastMousePos));
 		}
-		menu.highlightOption(menu.PointIsOverOption(lastMousePos));
+		else {
+			gameState = State::Playing;
+		}
+
 	}  break;
 
 	}
@@ -209,6 +220,11 @@ Game::Menu::Option::Name Game::Menu::getSelectedOption() const
 void Game::Menu::highlightOption(Option::Name optionIn)
 {
 	highlightedOption = optionIn;
+}
+
+void Game::Menu::selectOption(Option::Name optionIn)
+{
+	selectedOption = optionIn;
 }
 
 Game::Menu::Option::Name Game::Menu::PointIsOverOption(Vei2 pointIn) const
