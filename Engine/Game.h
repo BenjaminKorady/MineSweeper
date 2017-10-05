@@ -68,9 +68,10 @@ public:
 		void Draw(Graphics& gfx);
 		Option::Name getSelectedOption() const;
 		void highlightOption(Option::Name optionIn);
+		Option::Name PointIsOverOption(Vei2 pointIn) const;
+	private:
 		const int Game::Menu::getItemSizeX() const;
 		const int Game::Menu::getItemSizeY() const;
-	private:
 		static constexpr int maxOptions = 4;
 		Option options[maxOptions];
 		Option::Name highlightedOption = Option::Name::None;
@@ -98,4 +99,5 @@ private:
 	Menu menu;
 	Minefield minefield;
 	State gameState;
+	Vei2 lastMousePos;
 };

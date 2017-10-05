@@ -107,11 +107,12 @@ void Game::UpdateModel()
 					  } break;
 			
 	case State::InMenu:{
-		
-	}  break;
 		while (!wnd.mouse.IsEmpty()) {
-			const Mouse::Event e = wnd.mouse.Read();
+			lastMousePos = wnd.mouse.Read().GetPos();
 		}
+		menu.highlightOption(menu.PointIsOverOption(lastMousePos));
+	}  break;
+
 	}
 	
 }
@@ -208,6 +209,30 @@ Game::Menu::Option::Name Game::Menu::getSelectedOption() const
 void Game::Menu::highlightOption(Option::Name optionIn)
 {
 	highlightedOption = optionIn;
+}
+
+Game::Menu::Option::Name Game::Menu::PointIsOverOption(Vei2 pointIn) const
+{
+	RectI optionRectangle[maxOptions];
+
+	int offsetX = (Graphics::ScreenWidth) / 2;
+	int offsetY = (Graphics::ScreenHeight - (getItemSizeY() * maxOptions)) / 2 + Option::spacing / 2;
+	int x;
+	int y;
+
+	
+	for (int i = 0; i < maxOptions; ++i) {
+		x = offsetX - options[i].spriteSize.x / 2;
+		y = offsetY + getItemSizeY()*i;
+		optionRectangle[i] = RectI(Vei2(x, y), options[i].spriteSize.x, options[i].spriteSize.y);
+
+		if (optionRectangle[i].ContainsPoint(pointIn)) {
+			return options[i].name;
+		}
+	}
+
+	return Option::Name::None;
+
 }
 
 const int Game::Menu::getItemSizeX() const
