@@ -48,6 +48,11 @@ private:
 	/*  User Functions              */
 	/********************************/
 	void restartGame();
+	void HandlePlayingMouseInput();
+	void HandlePlayingKeyboardInput();
+	void HandleGameOverMouseInput();
+	void HandleGameOverKeyboardInput();
+	void HandleInMenuMouseInput();
 private:
 	MainWindow& wnd;
 	Graphics gfx;

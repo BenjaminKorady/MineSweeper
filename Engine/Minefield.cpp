@@ -201,6 +201,36 @@ Minefield::Minefield(int widthIn, int heightIn, int nMinesIn)
 	restart();
 }
 
+Minefield::Minefield(const Menu& menu)
+{
+	Menu::Option::Name difficulty = menu.getSelectedOption();
+
+	assert(difficulty != Menu::Option::Name::Custom);
+	assert(difficulty != Menu::Option::Name::None);
+
+	int fieldWidth, fieldHeight, mineCount;
+
+	switch (difficulty) {
+	case Menu::Option::Name::Beginner:
+		fieldWidth = menu.options[0].setsMinefieldSize.x;
+		fieldHeight = menu.options[0].setsMinefieldSize.y;
+		mineCount = menu.options[0].setsMines;
+		break;
+	case Menu::Option::Name::Intermediate:
+		fieldWidth = menu.options[1].setsMinefieldSize.x;
+		fieldHeight = menu.options[1].setsMinefieldSize.y;
+		mineCount = menu.options[1].setsMines;
+		break;
+	case Menu::Option::Name::Expert:
+		fieldWidth = menu.options[2].setsMinefieldSize.x;
+		fieldHeight = menu.options[2].setsMinefieldSize.y;
+		mineCount = menu.options[2].setsMines;
+		break;
+	}
+
+	*this = Minefield(fieldWidth, fieldHeight, mineCount);
+}
+
 void Minefield::draw(Graphics & gfx)
 {
 	gfx.DrawRect(rectangle, SpriteCodex::baseColor);

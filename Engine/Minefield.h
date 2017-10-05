@@ -2,6 +2,7 @@
 
 #include "Graphics.h"
 #include "Vei2.h"
+#include "Menu.h"
 
 class Minefield {
 private:
@@ -44,7 +45,8 @@ private:
 public:
 	Minefield() = default;
 	Minefield(int widthIn, int heightIn, int nMinesIn);
-    
+	Minefield(const Menu& menu);
+
 	void draw(Graphics& gfx);
 	void revealTileAt(Vei2& globalLocation);
 	void revealRecursively(Tile& tileIn);
