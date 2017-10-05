@@ -110,7 +110,7 @@ void Game::UpdateModel()
 		
 	}  break;
 		while (!wnd.mouse.IsEmpty()) {
-
+			const Mouse::Event e = wnd.mouse.Read();
 		}
 	}
 	
@@ -188,7 +188,7 @@ Game::Menu::Menu()
 void Game::Menu::Draw(Graphics & gfx)
 {
 	int offsetX = (Graphics::ScreenWidth) / 2;
-	int offsetY = (Graphics::ScreenHeight - (getItemSizeY() * maxOptions)) / 2;
+	int offsetY = (Graphics::ScreenHeight - (getItemSizeY() * maxOptions)) / 2 + Option::spacing/2;
 	int x; 
 	int y;
 
