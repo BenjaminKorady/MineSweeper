@@ -189,11 +189,15 @@ void Minefield::Tile::restart()
 	mine = false;
 }
 
-Minefield::Minefield(int nMinesIn)
+Minefield::Minefield(int widthIn, int heightIn, int nMinesIn)
 	:
+	width(widthIn),
+	height(heightIn),
 	nMines(nMinesIn)
 {
 	assert(nMines > 0 && nMines < width*height);
+	assert(Graphics::ScreenWidth >= Tile::width * widthIn);
+	assert(Graphics::ScreenHeight >= Tile::height * heightIn);
 	restart();
 }
 
@@ -359,6 +363,13 @@ bool Minefield::revealedAll() const
 
 void Minefield::restart()
 {
+
+	if (field!=nullptr) {
+		delete[] field;
+		field = nullptr;
+	}
+	field = new Tile[width*height];
+
 	isExploded = false;
 	std::random_device rd;
 	std::mt19937 rng(rd());

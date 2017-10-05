@@ -27,7 +27,6 @@ Game::Game(MainWindow& wnd)
 	wnd(wnd),
 	gfx(wnd),
 	gameState(State::InMenu),
-	minefield(40),
 	menu()
 {
 }
@@ -120,6 +119,27 @@ void Game::UpdateModel()
 		}
 		else {
 			gameState = State::Playing;
+			int fieldWidth, fieldHeight, mineCount;
+
+			switch (menu.getSelectedOption()) {
+			case Menu::Option::Name::Beginner:	
+				fieldWidth = menu.options[0].setsMinefieldSize.x;
+				fieldHeight = menu.options[0].setsMinefieldSize.y;
+				mineCount = menu.options[0].setsMines;
+				break;
+			case Menu::Option::Name::Intermediate: 	
+				fieldWidth = menu.options[1].setsMinefieldSize.x;
+				fieldHeight = menu.options[1].setsMinefieldSize.y;
+				mineCount = menu.options[1].setsMines;
+				break;
+			case Menu::Option::Name::Expert:
+				fieldWidth = menu.options[2].setsMinefieldSize.x;
+				fieldHeight = menu.options[2].setsMinefieldSize.y;
+				mineCount = menu.options[2].setsMines;
+				break;
+			}
+			minefield = Minefield(fieldWidth, fieldHeight, mineCount);
+		
 		}
 
 	}  break;
@@ -130,8 +150,8 @@ void Game::UpdateModel()
 
 void Game::restartGame()
 {
-	gameState = State::Playing;
-	minefield.restart();
+	gameState = State::InMenu;
+	menu.selectOption(Menu::Option::Name::None);
 }
 
 void Game::ComposeFrame()
@@ -193,7 +213,7 @@ Game::Menu::Menu()
 {
 	options[0] = Option(Option::Name::Beginner, Vei2(9, 9), 10, { 111, 27 }, { 116, 32 });
 	options[1] = Option(Option::Name::Intermediate, Vei2(16, 16), 40, { 159, 21 }, { 164, 27 });
-	options[2] = Option(Option::Name::Expert, Vei2(16, 30), 99, { 82, 27 }, { 86, 32 });
+	options[2] = Option(Option::Name::Expert, Vei2(30, 16), 99, { 82, 27 }, { 86, 32 });
 	options[3] = Option(Option::Name::Custom, Vei2(0,0), 0, { 87, 20 }, { 93, 26 });
 }
 

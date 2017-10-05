@@ -70,11 +70,11 @@ public:
 		void highlightOption(Option::Name optionIn);
 		void selectOption(Option::Name optionIn);
 		Option::Name PointIsOverOption(Vei2 pointIn) const;
+		static constexpr int maxOptions = 4;
+		Option options[maxOptions];
 	private:
 		const int Game::Menu::getItemSizeX() const;
 		const int Game::Menu::getItemSizeY() const;
-		static constexpr int maxOptions = 4;
-		Option options[maxOptions];
 		Option::Name highlightedOption = Option::Name::None;
 		Option::Name selectedOption = Option::Name::None;
 	};
