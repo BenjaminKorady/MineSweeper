@@ -195,7 +195,7 @@ void Game::Menu::Draw(Graphics & gfx)
 	for (int i = 0; i < maxOptions; ++i) {
 		x = offsetX - options[i].spriteSize.x / 2;
 		y = offsetY + getItemSizeY()*i;
-		options[i].Draw(x, y, gfx, false);
+		options[i].Draw(x, y, gfx, highlightedOption == options[i].name);
 	}
 
 }
