@@ -27,7 +27,8 @@ Game::Game(MainWindow& wnd)
 	wnd(wnd),
 	gfx(wnd),
 	gameState(State::InMenu),
-	minefield(40)
+	minefield(40),
+	menu()
 {
 }
 
@@ -108,7 +109,9 @@ void Game::UpdateModel()
 	case State::InMenu:{
 		
 	}  break;
-		
+		while (!wnd.mouse.IsEmpty()) {
+
+		}
 	}
 	
 }
@@ -119,57 +122,10 @@ void Game::restartGame()
 	minefield.restart();
 }
 
-void Game::drawMenu(int highlightOption)
-{
-	const int menuOptions = 4;
-	const int maxSpriteHeight = 55;	// only on glow
-	const Vei2 center = { Graphics::ScreenWidth / 2, Graphics::ScreenHeight / 2 };
-
-	const Vei2 beginnerSize = { 111, 25 };
-	const Vei2 intermediateSize = { 160, 20 };
-	const Vei2 expertSize = { 83, 25 };
-	const Vei2 customSize = { 89, 19 };
-
-	switch (highlightOption) {
-	case 0: 
-		SpriteCodex::drawBeginnerGlow(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx); 
-		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
-		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
-		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
-		break;
-	case 1:
-		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
-		SpriteCodex::drawIntermediateGlow(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
-		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
-		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
-		break;
-	case 2:
-		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
-		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
-		SpriteCodex::drawExpertGlow(center.x - expertSize.x / 2, center.y, gfx);
-		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
-		break;
-	case 3: 
-		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
-		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
-		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
-		SpriteCodex::drawCustomGlow(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
-		break;
-	default:
-		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
-		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
-		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
-		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
-		break;
-	}
-
-
-}
-
 void Game::ComposeFrame()
 {
 	if (gameState == State::InMenu) {
-		drawMenu(highlightMenuOption);
+		menu.Draw(gfx);
 	}
 	else {
 		minefield.draw(gfx);
@@ -183,4 +139,86 @@ void Game::ComposeFrame()
 		SpriteCodex::drawGameLoss(gfx); break;
 	}
 
+}
+
+Game::Menu::Option::Option(Name nameIn, Vei2 sizeIn, int minesIn)
+	:
+	name(nameIn), setsMinefieldSize(sizeIn), setsMines(minesIn)
+{
+}
+
+Game::Menu::Option::Option(Name nameIn)
+	:
+	name(nameIn)
+{
+}
+
+Game::Menu::Option::Option()
+{
+	name = Name::None;
+}
+
+Game::Menu::Menu()
+{
+	options[0] = Option(Option::Name::Beginner, Vei2(9,9), 10);
+	options[1] = Option(Option::Name::Intermediate, Vei2(16, 16), 40);
+	options[2] = Option(Option::Name::Expert, Vei2(16, 30), 99);
+//	options[4] = Option(Option::Name::Custom);
+}
+
+void Game::Menu::Draw(Graphics & gfx)
+{
+	const int menuOptions = 4;
+	const int maxSpriteHeight = 55;	// only on glow
+	const Vei2 center = { Graphics::ScreenWidth / 2, Graphics::ScreenHeight / 2 };
+
+	const Vei2 beginnerSize = { 111, 27 };
+	const Vei2 intermediateSize = { 160, 20 };
+	const Vei2 expertSize = { 83, 25 };
+	const Vei2 customSize = { 89, 19 };
+	const Vei2 beginnerGlowSize = { 116, 32 };
+
+	switch (highlightedOption) {
+	case Option::Name::Beginner:
+		SpriteCodex::drawBeginnerGlow(center.x - beginnerGlowSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
+		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
+		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
+		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
+		break;
+	case Option::Name::Intermediate:
+		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
+		SpriteCodex::drawIntermediateGlow(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
+		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
+		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
+		break;
+	case Option::Name::Expert:
+		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
+		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
+		SpriteCodex::drawExpertGlow(center.x - expertSize.x / 2, center.y, gfx);
+		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
+		break;
+	case Option::Name::Custom:
+		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
+		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
+		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
+		SpriteCodex::drawCustomGlow(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
+		break;
+	case Option::Name::None:
+		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
+		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
+		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
+		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
+		break;
+	}
+
+}
+
+Game::Menu::Option::Name Game::Menu::getSelectedOption()
+{
+	return selectedOption;
+}
+
+void Game::Menu::highlightOption(Option::Name optionIn)
+{
+	highlightedOption = optionIn;
 }

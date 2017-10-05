@@ -34,6 +34,39 @@ public:
 		Loss,
 		InMenu
 	};
+
+	class Menu {
+	public:
+		class Option {
+		public:
+			enum class Name {
+				Beginner,
+				Intermediate,
+				Expert,
+				Custom,
+				None
+			};
+
+			Option(Name nameIn, Vei2 sizeIn, int minesIn);
+			Option(Name nameIn);
+			Option();
+			Name name;
+			Vei2 setsMinefieldSize;
+			int setsMines;
+		};
+		
+	public:
+		Menu();
+		void Draw(Graphics& gfx);
+		Option::Name getSelectedOption();
+		void highlightOption(Option::Name optionIn);
+	private:
+		static constexpr int maxOptions = 4;
+		Option options[maxOptions];
+		Option::Name highlightedOption = Option::Name::None;
+		Option::Name selectedOption = Option::Name::None;
+	};
+
 public:
 	Game( class MainWindow& wnd );
 	Game( const Game& ) = delete;
@@ -46,14 +79,13 @@ private:
 	/*  User Functions              */
 	/********************************/
 	void restartGame();
-	void drawMenu(int highlightOption);
 private:
 	MainWindow& wnd;
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
 	/********************************/
-	int highlightMenuOption = 0;
+	Menu menu;
 	Minefield minefield;
 	State gameState;
 };
