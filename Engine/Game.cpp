@@ -125,8 +125,6 @@ void Game::restartGame()
 void Game::ComposeFrame()
 {
 	if (gameState == State::InMenu) {
-		menu.getItemSizeX();
-		menu.getItemSizeY();
 		menu.Draw(gfx);
 	}
 	else {
@@ -149,61 +147,55 @@ Game::Menu::Option::Option(Name nameIn, Vei2 sizeIn, int minesIn, Vei2 spriteSiz
 {
 }
 
+void Game::Menu::Option::Draw(int x, int y, Graphics & gfx, bool glow)
+{
+	if (glow) {
+		switch (name) {
+		case Name::Beginner:
+			SpriteCodex::drawBeginnerGlow(x, y, gfx); break;
+		case Name::Intermediate:
+			SpriteCodex::drawIntermediateGlow(x, y, gfx); break;
+		case Name::Expert:
+			SpriteCodex::drawExpertGlow(x, y, gfx); break;
+		case Name::Custom:
+			SpriteCodex::drawCustomGlow(x, y, gfx); break;
+		}
+	}
+
+	else {
+		switch (name) {
+		case Name::Beginner:
+			SpriteCodex::drawBeginner(x, y, gfx); break;
+		case Name::Intermediate:
+			SpriteCodex::drawIntermediate(x, y, gfx); break;
+		case Name::Expert:
+			SpriteCodex::drawExpert(x, y, gfx); break;
+		case Name::Custom:
+			SpriteCodex::drawCustom(x, y, gfx); break;
+		}
+	}
+}
+
 
 Game::Menu::Menu()
 {
 	options[0] = Option(Option::Name::Beginner, Vei2(9, 9), 10, { 111, 27 }, { 116, 32 });
 	options[1] = Option(Option::Name::Intermediate, Vei2(16, 16), 40, { 159, 21 }, { 164, 27 });
 	options[2] = Option(Option::Name::Expert, Vei2(16, 30), 99, { 82, 27 }, { 86, 32 });
-	options[4] = Option(Option::Name::Custom, Vei2(0,0), 0, { 87, 20 }, { 93, 26 });
+	options[3] = Option(Option::Name::Custom, Vei2(0,0), 0, { 87, 20 }, { 93, 26 });
 }
 
 void Game::Menu::Draw(Graphics & gfx)
 {
-	const int menuOptions = 4;
-	const int spacing = 55;	
-	const Vei2 center = { Graphics::ScreenWidth / 2, Graphics::ScreenHeight / 2 };
+	int offsetX = (Graphics::ScreenWidth) / 2;
+	int offsetY = (Graphics::ScreenHeight - (getItemSizeY() * maxOptions)) / 2;
+	int x; 
+	int y;
 
-	const Vei2 beginnerSize = { 111, 27 };
-	const Vei2 beginnerGlowSize = { 116, 32 };
-	const Vei2 intermediateSize = { 159, 21 };
-	const Vei2 intermediateGlowSize = { 164, 27 };
-	const Vei2 expertSize = { 82, 27 };
-	const Vei2 expertGlowSize = { 86, 32 };
-	const Vei2 customSize = { 87, 20 };
-	const Vei2 customGlowSize = { 93, 26 };
-
-	switch (highlightedOption) {
-	case Option::Name::Beginner:
-		SpriteCodex::drawBeginnerGlow(center.x - beginnerGlowSize.x / 2, center.y - 2 * spacing, gfx);
-		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - spacing, gfx);
-		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
-		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + spacing, gfx);
-		break;
-	case Option::Name::Intermediate:
-		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * spacing, gfx);
-		SpriteCodex::drawIntermediateGlow(center.x - intermediateSize.x / 2, center.y - spacing, gfx);
-		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
-		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + spacing, gfx);
-		break;
-	case Option::Name::Expert:
-		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * spacing, gfx);
-		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - spacing, gfx);
-		SpriteCodex::drawExpertGlow(center.x - expertSize.x / 2, center.y, gfx);
-		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + spacing, gfx);
-		break;
-	case Option::Name::Custom:
-		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * spacing, gfx);
-		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - spacing, gfx);
-		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
-		SpriteCodex::drawCustomGlow(center.x - customSize.x / 2, center.y + spacing, gfx);
-		break;
-	case Option::Name::None:
-		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * spacing, gfx);
-		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - spacing, gfx);
-		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
-		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + spacing, gfx);
-		break;
+	for (int i = 0; i < maxOptions; ++i) {
+		x = offsetX - options[i].spriteSize.x / 2;
+		y = offsetY + getItemSizeY()*i;
+		options[i].Draw(x, y, gfx, false);
 	}
 
 }
@@ -240,5 +232,5 @@ const int Game::Menu::getItemSizeY() const
 			maxSizeY = options[i].spriteGlowSize.y;
 	}
 
-	return maxSizeY + spacing;
+	return maxSizeY + Option::spacing;
 }

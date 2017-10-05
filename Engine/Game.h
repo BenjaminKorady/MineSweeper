@@ -50,6 +50,10 @@ public:
 		public:
 			Option() = default;
 			Option(Name nameIn, Vei2 sizeIn, int minesIn,  Vei2 spriteSizeIn, Vei2 spriteGlowSizeIn);
+
+			void Draw(int x, int y, Graphics& gfx, bool glow);
+			static constexpr int spacing = 54;
+
 		public:
 			Name name;
 			Vei2 setsMinefieldSize;
@@ -66,8 +70,6 @@ public:
 		void highlightOption(Option::Name optionIn);
 		const int Game::Menu::getItemSizeX() const;
 		const int Game::Menu::getItemSizeY() const;
-	public:
-		static constexpr int spacing = 54;
 	private:
 		static constexpr int maxOptions = 4;
 		Option options[maxOptions];
