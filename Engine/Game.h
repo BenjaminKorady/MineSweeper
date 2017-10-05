@@ -47,19 +47,27 @@ public:
 				None
 			};
 
-			Option(Name nameIn, Vei2 sizeIn, int minesIn);
-			Option(Name nameIn);
-			Option();
+		public:
+			Option() = default;
+			Option(Name nameIn, Vei2 sizeIn, int minesIn,  Vei2 spriteSizeIn, Vei2 spriteGlowSizeIn);
+		public:
 			Name name;
 			Vei2 setsMinefieldSize;
+			Vei2 spriteSize;
+			Vei2 spriteGlowSize;
 			int setsMines;
+
 		};
 		
 	public:
 		Menu();
 		void Draw(Graphics& gfx);
-		Option::Name getSelectedOption();
+		Option::Name getSelectedOption() const;
 		void highlightOption(Option::Name optionIn);
+		const int Game::Menu::getItemSizeX() const;
+		const int Game::Menu::getItemSizeY() const;
+	public:
+		static constexpr int spacing = 54;
 	private:
 		static constexpr int maxOptions = 4;
 		Option options[maxOptions];
@@ -70,7 +78,7 @@ public:
 public:
 	Game( class MainWindow& wnd );
 	Game( const Game& ) = delete;
-	Game& operator=( const Game& ) = delete;
+	Game& operator=( const Game& ) = delete; 
 	void Go();
 private:
 	void ComposeFrame();

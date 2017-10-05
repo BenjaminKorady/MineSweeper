@@ -125,6 +125,8 @@ void Game::restartGame()
 void Game::ComposeFrame()
 {
 	if (gameState == State::InMenu) {
+		menu.getItemSizeX();
+		menu.getItemSizeY();
 		menu.Draw(gfx);
 	}
 	else {
@@ -141,79 +143,72 @@ void Game::ComposeFrame()
 
 }
 
-Game::Menu::Option::Option(Name nameIn, Vei2 sizeIn, int minesIn)
+Game::Menu::Option::Option(Name nameIn, Vei2 sizeIn, int minesIn, Vei2 spriteSizeIn, Vei2 spriteGlowSizeIn)
 	:
-	name(nameIn), setsMinefieldSize(sizeIn), setsMines(minesIn)
+	name(nameIn), setsMinefieldSize(sizeIn), setsMines(minesIn), spriteSize(spriteSizeIn), spriteGlowSize(spriteGlowSizeIn)
 {
 }
 
-Game::Menu::Option::Option(Name nameIn)
-	:
-	name(nameIn)
-{
-}
-
-Game::Menu::Option::Option()
-{
-	name = Name::None;
-}
 
 Game::Menu::Menu()
 {
-	options[0] = Option(Option::Name::Beginner, Vei2(9,9), 10);
-	options[1] = Option(Option::Name::Intermediate, Vei2(16, 16), 40);
-	options[2] = Option(Option::Name::Expert, Vei2(16, 30), 99);
-//	options[4] = Option(Option::Name::Custom);
+	options[0] = Option(Option::Name::Beginner, Vei2(9, 9), 10, { 111, 27 }, { 116, 32 });
+	options[1] = Option(Option::Name::Intermediate, Vei2(16, 16), 40, { 159, 21 }, { 164, 27 });
+	options[2] = Option(Option::Name::Expert, Vei2(16, 30), 99, { 82, 27 }, { 86, 32 });
+	options[4] = Option(Option::Name::Custom, Vei2(0,0), 0, { 87, 20 }, { 93, 26 });
 }
 
 void Game::Menu::Draw(Graphics & gfx)
 {
 	const int menuOptions = 4;
-	const int maxSpriteHeight = 55;	// only on glow
+	const int spacing = 55;	
 	const Vei2 center = { Graphics::ScreenWidth / 2, Graphics::ScreenHeight / 2 };
 
 	const Vei2 beginnerSize = { 111, 27 };
-	const Vei2 intermediateSize = { 160, 20 };
-	const Vei2 expertSize = { 83, 25 };
-	const Vei2 customSize = { 89, 19 };
 	const Vei2 beginnerGlowSize = { 116, 32 };
+	const Vei2 intermediateSize = { 159, 21 };
+	const Vei2 intermediateGlowSize = { 164, 27 };
+	const Vei2 expertSize = { 82, 27 };
+	const Vei2 expertGlowSize = { 86, 32 };
+	const Vei2 customSize = { 87, 20 };
+	const Vei2 customGlowSize = { 93, 26 };
 
 	switch (highlightedOption) {
 	case Option::Name::Beginner:
-		SpriteCodex::drawBeginnerGlow(center.x - beginnerGlowSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
-		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
+		SpriteCodex::drawBeginnerGlow(center.x - beginnerGlowSize.x / 2, center.y - 2 * spacing, gfx);
+		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - spacing, gfx);
 		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
-		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
+		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + spacing, gfx);
 		break;
 	case Option::Name::Intermediate:
-		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
-		SpriteCodex::drawIntermediateGlow(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
+		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * spacing, gfx);
+		SpriteCodex::drawIntermediateGlow(center.x - intermediateSize.x / 2, center.y - spacing, gfx);
 		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
-		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
+		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + spacing, gfx);
 		break;
 	case Option::Name::Expert:
-		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
-		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
+		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * spacing, gfx);
+		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - spacing, gfx);
 		SpriteCodex::drawExpertGlow(center.x - expertSize.x / 2, center.y, gfx);
-		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
+		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + spacing, gfx);
 		break;
 	case Option::Name::Custom:
-		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
-		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
+		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * spacing, gfx);
+		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - spacing, gfx);
 		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
-		SpriteCodex::drawCustomGlow(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
+		SpriteCodex::drawCustomGlow(center.x - customSize.x / 2, center.y + spacing, gfx);
 		break;
 	case Option::Name::None:
-		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * maxSpriteHeight, gfx);
-		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - maxSpriteHeight, gfx);
+		SpriteCodex::drawBeginner(center.x - beginnerSize.x / 2, center.y - 2 * spacing, gfx);
+		SpriteCodex::drawIntermediate(center.x - intermediateSize.x / 2, center.y - spacing, gfx);
 		SpriteCodex::drawExpert(center.x - expertSize.x / 2, center.y, gfx);
-		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + maxSpriteHeight, gfx);
+		SpriteCodex::drawCustom(center.x - customSize.x / 2, center.y + spacing, gfx);
 		break;
 	}
 
 }
 
-Game::Menu::Option::Name Game::Menu::getSelectedOption()
+Game::Menu::Option::Name Game::Menu::getSelectedOption() const
 {
 	return selectedOption;
 }
@@ -221,4 +216,29 @@ Game::Menu::Option::Name Game::Menu::getSelectedOption()
 void Game::Menu::highlightOption(Option::Name optionIn)
 {
 	highlightedOption = optionIn;
+}
+
+const int Game::Menu::getItemSizeX() const
+{
+
+	int maxSizeX = 0;
+	int maxSizeY = 0;
+	for (int i = 0; i < maxOptions; ++i) {
+		if (options[i].spriteGlowSize.x > maxSizeX)
+			maxSizeX = options[i].spriteGlowSize.x;
+	}
+
+	return maxSizeX;
+}
+
+const int Game::Menu::getItemSizeY() const
+{
+
+	int maxSizeY = 0;
+	for (int i = 0; i < maxOptions; ++i) {
+		if (options[i].spriteGlowSize.y > maxSizeY)
+			maxSizeY = options[i].spriteGlowSize.y;
+	}
+
+	return maxSizeY + spacing;
 }
