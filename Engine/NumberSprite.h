@@ -129,16 +129,13 @@ private:
 				gfx.PutPixel(x + 3, y + 9, c);
 				gfx.PutPixel(x + 5, y + 9, c);
 				gfx.PutPixel(x + 7, y + 9, c);
-				gfx.PutPixel(x + 9, y + 9, c);
 				gfx.PutPixel(x + 2, y + 10, c);
 				gfx.PutPixel(x + 4, y + 10, c);
 				gfx.PutPixel(x + 6, y + 10, c);
 				gfx.PutPixel(x + 8, y + 10, c);
-				gfx.PutPixel(x + 10, y + 10, c);
 				gfx.PutPixel(x + 3, y + 11, c);
 				gfx.PutPixel(x + 5, y + 11, c);
 				gfx.PutPixel(x + 7, y + 11, c);
-				gfx.PutPixel(x + 9, y + 11, c);
 				if (isOn) {
 					gfx.PutPixel(x + 2, y + 9, c);
 					gfx.PutPixel(x + 4, y + 9, c);
