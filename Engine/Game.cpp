@@ -21,12 +21,13 @@
 #include "MainWindow.h"
 #include "Game.h"
 #include "SpriteCodex.h"
+#include "NumberSprite.h"
 
 Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
 	gfx(wnd),
-	gameState(State::InMenu),
+	gameState(State::Test),
 	menu()
 {
 }
@@ -83,19 +84,28 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	if (gameState == State::InMenu) {
-		menu.Draw(gfx);
+	if (gameState == State::Test) {
+		for (int i = 0; i < 10; ++i) {
+			NumberSprite num(i);
+			num.draw(gfx, 200 + 12*i, 200);
+		}
+
 	}
 	else {
-		minefield.draw(gfx);
-	}
+		if (gameState == State::InMenu) {
+			menu.Draw(gfx);
+		}
+		else {
+			minefield.draw(gfx);
+		}
 
-	switch (gameState) {
+		switch (gameState) {
 
-	case State::Win:
-		SpriteCodex::drawGameWin(gfx); break;
-	case State::Loss:
-		SpriteCodex::drawGameLoss(gfx); break;
+		case State::Win:
+			SpriteCodex::drawGameWin(gfx); break;
+		case State::Loss:
+			SpriteCodex::drawGameLoss(gfx); break;
+		}
 	}
 }
 

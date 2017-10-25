@@ -166,6 +166,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Minefield.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="NumberSprite.cpp" />
     <ClCompile Include="RectI.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SpriteCodex.cpp" />

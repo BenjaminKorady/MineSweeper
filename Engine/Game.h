@@ -39,7 +39,8 @@ public:
 		Playing,
 		Win,
 		Loss,
-		InMenu
+		InMenu,
+		Test
 	};
 	
 public:
