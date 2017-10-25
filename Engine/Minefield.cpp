@@ -250,7 +250,9 @@ void Minefield::generateMines(Tile& clickedTile)
 				field[y*width + x].setAdjacentMines(n);
 			}
 		}
-	} while ((getAdjacentMines(clickedTile) != 0));
+	// Keep generating a new minefield unless clickedTile generates with 0 adjacent mine or has mine (allow dying on first click because that's always fun) 
+	} while ((getAdjacentMines(clickedTile) != 0)  && !clickedTile.hasMine());
+	
 	minesAreGenerated = true;
 }
 

@@ -28,7 +28,6 @@
 #include <chrono>
 #include "DigitalDisplay.h"
 
-// TODO: 1st click always on 0-mine Tile (or mine?)
 // TODO: ONLY Click + Release on the same tile reveals 
 // TODO: Implement Custom difficulty
 
