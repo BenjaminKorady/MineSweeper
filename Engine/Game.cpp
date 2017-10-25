@@ -97,11 +97,7 @@ void Game::ComposeFrame()
 	case State::Loss:
 		SpriteCodex::drawGameLoss(gfx); break;
 	}
-
 }
-
-
-
 
 void Game::restartGame()
 {

@@ -147,6 +147,7 @@
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Minefield.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="NumberSprite.h" />
     <ClInclude Include="RectI.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Sound.h" />
