@@ -157,6 +157,11 @@ void Minefield::Tile::spawnMine()
 	mine = true;
 }
 
+void Minefield::Tile::clearMine()
+{
+	mine = false;
+}
+
 void Minefield::Tile::reveal()
 {
 	assert(state == State::Hidden);
@@ -220,6 +225,44 @@ Minefield::Minefield(const Menu& menu)
 	*this = Minefield(fieldWidth, fieldHeight, mineCount);
 }
 
+void Minefield::generateMines(Tile& clickedTile)
+{
+	assert(!minesAreGenerated);
+	std::random_device rd;
+	std::mt19937 rng(rd());
+	std::uniform_int_distribution<int> xDist(0, width - 1);
+	std::uniform_int_distribution<int> yDist(0, height - 1);
+
+	do {
+		clearMines();
+		for (int spawnedMines = 0; spawnedMines < nMines; ++spawnedMines) {
+			Vei2 spawnPosition;
+			do {
+				spawnPosition = { xDist(rng), yDist(rng) };
+			} while (tileAt(spawnPosition).hasMine());
+
+			tileAt(spawnPosition).spawnMine();
+		}
+
+		for (int y = 0; y < height; ++y) {
+			for (int x = 0; x < width; ++x) {
+				int n = getAdjacentMines(field[y*width + x]);
+				field[y*width + x].setAdjacentMines(n);
+			}
+		}
+	} while ((getAdjacentMines(clickedTile) != 0));
+	minesAreGenerated = true;
+}
+
+void Minefield::clearMines()
+{
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			field[y*width + x].clearMine();
+		}
+	}
+}
+
 void Minefield::draw(Graphics & gfx)
 {
 	gfx.DrawRect(rectangle, SpriteCodex::baseColor);
@@ -274,6 +317,9 @@ void Minefield::revealTileAt(Vei2 & globalLocation)
 
 void Minefield::revealRecursively(Tile & tileIn)
 {
+	if (getRevealedCounter() == 0) {
+		generateMines(tileIn);
+	}
 	if (tileIn.getState() == Tile::State::Hidden) {
 		tileIn.reveal();
 		if (tileIn.hasMine()) {
@@ -414,6 +460,7 @@ int Minefield::getHeight() const
 
 void Minefield::restart()
 {
+	minesAreGenerated = false;
 
 	if (field!=nullptr) {
 		delete[] field;
@@ -422,10 +469,6 @@ void Minefield::restart()
 	field = new Tile[width*height];
 
 	isExploded = false;
-	std::random_device rd;
-	std::mt19937 rng(rd());
-	std::uniform_int_distribution<int> xDist(0, width - 1);
-	std::uniform_int_distribution<int> yDist(0, height - 1);
 
 	Vei2 centerTopLeft = { (Graphics::ScreenWidth - width * Tile::width) / 2, (Graphics::ScreenHeight - height * Tile::height) / 2 };
 
@@ -437,22 +480,6 @@ void Minefield::restart()
 	}
 
 	rectangle = RectI(field[0].getPosition(), width*Tile::width, height*Tile::height);
-
-
-	for (int spawnedMines = 0; spawnedMines < nMines; ++spawnedMines) {
-		Vei2 spawnPosition;
-		do {
-			spawnPosition = { xDist(rng), yDist(rng) };
-		} while (tileAt(spawnPosition).hasMine());
-		tileAt(spawnPosition).spawnMine();
-	}
-
-	for (int y = 0; y < height; ++y) {
-		for (int x = 0; x < width; ++x) {
-			int n = getAdjacentMines(field[y*width + x]);
-			field[y*width + x].setAdjacentMines(n);
-		}
-	}
 
 	revealedCounter = 0;
 }

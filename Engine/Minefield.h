@@ -24,12 +24,12 @@ private:
 		void setAdjacentMines(int in);
 		int getAdjacentMines() const;
 		void spawnMine();
+		void clearMine();
 		void reveal();
 		bool flag();
 		State getState() const;
 		bool hasMine() const;
 		void restart();
-
 
 		static constexpr int width = 16;
 		static constexpr int height	 = 16;
@@ -48,6 +48,8 @@ public:
 	Minefield(int widthIn, int heightIn, int nMinesIn);
 	Minefield(const Menu& menu);
 
+	void generateMines(Tile& clickedTile);
+	void clearMines();
 	void draw(Graphics& gfx);
 	void revealTileAt(Vei2& globalLocation);
 	void revealRecursively(Tile& tileIn);
@@ -71,7 +73,7 @@ public:
 	static constexpr int displayOffset = 5;
 
 private:
-
+	bool minesAreGenerated = false;
 private:
 	Vei2 getTileLocation(const Vei2& globalPosition) const;
 	int getAdjacentMines(const Tile& tileIn) const;
