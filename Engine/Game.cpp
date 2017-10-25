@@ -85,11 +85,8 @@ void Game::UpdateModel()
 void Game::ComposeFrame()
 {
 	if (gameState == State::Test) {
-		for (int i = 0; i < 10; ++i) {
-			NumberSprite num(i);
-			num.draw(gfx, 200 + 13*i, 200);
-		}
-
+		NumberSprite num = 1234;
+		num.draw(gfx, 0, 0);
 	}
 	else {
 		if (gameState == State::InMenu) {
