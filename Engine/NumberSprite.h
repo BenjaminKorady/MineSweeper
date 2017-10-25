@@ -21,8 +21,9 @@ private:
 		Digit(int value):
 			value(value)
 		{
-			assert(value <= 9 && value >= 0);
+			assert(value <= 9 && value >= -1);
 			switch (value) {
+			case -1: portions = 0b0001000; break;	// Special case (negation symbol)
 			case 0: portions = 0b1110111; break;
 			case 1: portions = 0b0010010; break;
 			case 2: portions = 0b1011101; break;
