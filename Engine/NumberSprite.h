@@ -246,6 +246,7 @@ public:
 	NumberSprite(int value, int size);
 	void draw(Graphics& gfx, int x, int y) const;
 	int getValue() const;
+	int getWidth() const;
 private:
 	int value;
 	std::vector<Digit> digits;

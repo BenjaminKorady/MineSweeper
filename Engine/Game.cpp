@@ -28,7 +28,8 @@ Game::Game(MainWindow& wnd)
 	wnd(wnd),
 	gfx(wnd),
 	gameState(State::InMenu),
-	menu()
+	menu(),
+	timeDisplay(0)
 {
 }
 
@@ -44,12 +45,21 @@ void Game::UpdateModel()
 {
 	switch (gameState) {
 	case State::Playing: {
-			if (minefield.isExploded) {
-				gameState = State::Loss;
-			}
-			else if (minefield.revealedAll()) {
-				gameState = State::Win;
-			}
+		if (minefield.isExploded) {
+			gameState = State::Loss;
+		}
+		else if (minefield.revealedAll()) {
+			gameState = State::Win;
+			gameEndTime = std::chrono::steady_clock::now();
+		}
+		else { // Game is running
+			timeNow = std::chrono::steady_clock::now();
+			if (gameHasStarted()) {
+				elapsedTime = (int)std::chrono::duration_cast<std::chrono::seconds>(timeNow - gameStartTime).count();
+				timeDisplay = DigitalDisplay(elapsedTime);
+			}			
+			// else elaspedTime = 0;
+		}
 			HandlePlayingMouseInput();
 			HandlePlayingKeyboardInput();
 
@@ -87,6 +97,9 @@ void Game::ComposeFrame()
 	}
 	else {
 		minefield.draw(gfx);
+		int x = (Graphics::ScreenWidth + minefield.getWidth()) / 2 - timeDisplay.getWidth();
+		int y = (Graphics::ScreenHeight - minefield.getHeight()) / 2 - timeDisplay.getHeight() - Minefield::displayOffset;
+		timeDisplay.draw(gfx, x, y);
 	}
 
 	switch (gameState) {
@@ -157,12 +170,20 @@ void Game::HandleInMenuMouseInput()
 	menu.highlightOption(menu.PointIsOverOption(lastMousePos));
 }
 
+bool Game::gameHasStarted() const
+{
+	return minefield.getRevealedCounter() >= 1;
+}
+
 void Game::HandlePlayingMouseInput()
 {
 	while (!wnd.mouse.IsEmpty()) {
 		const Mouse::Event e = wnd.mouse.Read();
 		if (e.GetType() == Mouse::Event::Type::LRelease) {
 			if (minefield.tileExistsAtLocation(e.GetPos())) {
+				if (minefield.getRevealedCounter() == 0) {
+					gameStartTime = std::chrono::steady_clock::now();
+				}
 				minefield.revealTileAt(e.GetPos());
 			}
 		}

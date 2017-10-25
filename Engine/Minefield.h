@@ -56,14 +56,19 @@ public:
 	void flagTileAt(const Vei2& globalLocation);
 	const Tile& tileAt(const Vei2& tileLocation) const;
 	Tile& tileAt(const Vei2& tileLocation);
+	void restart();
+
 
 	bool revealedAll() const;
-	bool isExploded = false;
 	bool tileExistsAtLocation(const Vei2& globalLocation) const;
 	int getFlaggedCounter() const;
 	int getMineCounter() const;
-	void restart();
+	int getRevealedCounter() const;
+	int getWidth() const;
+	int getHeight() const;
 
+	bool isExploded = false;
+	static constexpr int displayOffset = 5;
 
 private:
 
@@ -72,7 +77,6 @@ private:
 	int getAdjacentMines(const Tile& tileIn) const;
 	void updateDisplay();
 
-	static constexpr int displayOffset = 5;
 	Tile* field = nullptr;
 	int width;
 	int height;

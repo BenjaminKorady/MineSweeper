@@ -26,8 +26,8 @@
 #include "Minefield.h"
 #include "Menu.h"
 #include <chrono>
+#include "DigitalDisplay.h"
 
-// TODO: Implement mine counter
 // TODO: Implement timer
 // TODO: 1st click always on 0-mine Tile (or mine?)
 // TODO: ONLY Click + Release on the same tile reveals 
@@ -61,18 +61,21 @@ private:
 	void HandleGameOverMouseInput();
 	void HandleGameOverKeyboardInput();
 	void HandleInMenuMouseInput();
+	bool gameHasStarted() const;
 private:
 	MainWindow& wnd;
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
 	/********************************/
-	bool gameHasStarted = false;
 	Menu menu;
 	Minefield minefield;
 	State gameState;
 	Vei2 lastMousePos;
+	DigitalDisplay timeDisplay;
+	std::chrono::steady_clock::time_point gameStartTime;
+	std::chrono::steady_clock::time_point timeNow;
+	std::chrono::steady_clock::time_point gameEndTime;
 	int elapsedTime = 0;
-
 
 };

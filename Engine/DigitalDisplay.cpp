@@ -1,14 +1,14 @@
 #include "DigitalDisplay.h"
-
+#include <algorithm>
 DigitalDisplay::DigitalDisplay()
 {
 	*this = DigitalDisplay(0, defaultSize);
 }
 
-DigitalDisplay::DigitalDisplay(int start, int displayedDigits)
+DigitalDisplay::DigitalDisplay(int value, int displayedDigits)
 	:
 	displayedDigits(displayedDigits),
-	displayedNumber(NumberSprite(start, displayedDigits))
+	displayedNumber(NumberSprite(std::min(value, maxDisplayedValue), displayedDigits))
 {
 }
 
@@ -20,6 +20,16 @@ void DigitalDisplay::draw(Graphics & gfx, int x, int y)
 int DigitalDisplay::getValue() const
 {
 	return displayedNumber.getValue();
+}
+
+int DigitalDisplay::getWidth() const
+{
+	return displayedNumber.getWidth();
+}
+
+int DigitalDisplay::getHeight() const
+{
+	return digitHeight;
 }
 
 void DigitalDisplay::operator++()

@@ -397,6 +397,21 @@ bool Minefield::revealedAll() const
 	return revealedCounter == nonMineTiles;
 }
 
+int Minefield::getRevealedCounter() const
+{
+	return revealedCounter;
+}
+
+int Minefield::getWidth() const
+{
+	return width * Tile::width;
+}
+
+int Minefield::getHeight() const
+{
+	return height * Tile::height;
+}
+
 void Minefield::restart()
 {
 
