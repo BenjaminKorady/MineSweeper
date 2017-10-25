@@ -21,7 +21,7 @@
 #include "MainWindow.h"
 #include "Game.h"
 #include "SpriteCodex.h"
-#include "NumberSprite.h"
+#include "DigitalDisplay.h"
 
 Game::Game(MainWindow& wnd)
 	:
@@ -87,7 +87,6 @@ void Game::ComposeFrame()
 	}
 	else {
 		minefield.draw(gfx);
-
 	}
 
 	switch (gameState) {

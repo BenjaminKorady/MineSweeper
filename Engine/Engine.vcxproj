@@ -154,9 +154,11 @@
     <ClInclude Include="SoundEffect.h" />
     <ClInclude Include="SpriteCodex.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="DigitalDisplay.h" />
     <ClInclude Include="Vei2.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DigitalDisplay.cpp" />
     <ClCompile Include="DXErr.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Graphics.cpp" />

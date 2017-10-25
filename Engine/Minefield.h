@@ -3,6 +3,7 @@
 #include "Graphics.h"
 #include "Vei2.h"
 #include "Menu.h"
+#include "DigitalDisplay.h"
 
 class Minefield {
 private:
@@ -24,7 +25,7 @@ private:
 		int getAdjacentMines() const;
 		void spawnMine();
 		void reveal();
-		void flag();
+		bool flag();
 		State getState() const;
 		bool hasMine() const;
 		void restart();
@@ -52,28 +53,35 @@ public:
 	void revealRecursively(Tile& tileIn);
 	bool revealSurrounding(Tile& tileIn);
 	void revealOrFlagAt(const Vei2& globalLocation);
-	void flagTileAt(Vei2& globalLocation);
+	void flagTileAt(const Vei2& globalLocation);
 	const Tile& tileAt(const Vei2& tileLocation) const;
 	Tile& tileAt(const Vei2& tileLocation);
 
 	bool revealedAll() const;
 	bool isExploded = false;
 	bool tileExistsAtLocation(const Vei2& globalLocation) const;
+	int getFlaggedCounter() const;
+	int getMineCounter() const;
 	void restart();
 
 
+private:
 
 private:
+	Vei2 getTileLocation(const Vei2& globalPosition) const;
+	int getAdjacentMines(const Tile& tileIn) const;
+	void updateDisplay();
+
+	static constexpr int displayOffset = 5;
 	Tile* field = nullptr;
 	int width;
 	int height;
 	Vei2 position = Vei2(0, 0);
 	int nMines;
-	Vei2 getTileLocation(const Vei2& globalPosition) const;
-	int getAdjacentMines(const Tile& tileIn) const;
 	int revealedCounter = 0;
+	int flaggedCounter = 0;
 	RectI rectangle;
-
+	DigitalDisplay minesLeftDisplay;
 
 
 };

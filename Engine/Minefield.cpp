@@ -163,14 +163,18 @@ void Minefield::Tile::reveal()
 	state = State::Revealed;
 }
 
-void Minefield::Tile::flag()
+bool Minefield::Tile::flag()
 {
 	if (state == State::Hidden) {
 		state = State::Flagged;
+		return true;
 	}
 	else if (state == State::Flagged) {
 		state = State::Hidden;
+		return false;
 	}
+
+	return false;
 }
 
 Minefield::Tile::State Minefield::Tile::getState() const
@@ -193,7 +197,8 @@ Minefield::Minefield(int widthIn, int heightIn, int nMinesIn)
 	:
 	width(widthIn),
 	height(heightIn),
-	nMines(nMinesIn)
+	nMines(nMinesIn),
+	minesLeftDisplay(DigitalDisplay(nMines))
 {
 	assert(nMines > 0 && nMines < width*height);
 	assert(Graphics::ScreenWidth >= Tile::width * widthIn);
@@ -208,26 +213,10 @@ Minefield::Minefield(const Menu& menu)
 	assert(difficulty != Menu::Option::Name::Custom);	
 	assert(difficulty != Menu::Option::Name::None);
 
-	int fieldWidth, fieldHeight, mineCount;
-
-	switch (difficulty) {
-	case Menu::Option::Name::Beginner:
-		fieldWidth = menu.options[0].setsMinefieldSize.x;
-		fieldHeight = menu.options[0].setsMinefieldSize.y;
-		mineCount = menu.options[0].setsMines;
-		break;
-	case Menu::Option::Name::Intermediate:
-		fieldWidth = menu.options[1].setsMinefieldSize.x;
-		fieldHeight = menu.options[1].setsMinefieldSize.y;
-		mineCount = menu.options[1].setsMines;
-		break;
-	case Menu::Option::Name::Expert:
-		fieldWidth = menu.options[2].setsMinefieldSize.x;
-		fieldHeight = menu.options[2].setsMinefieldSize.y;
-		mineCount = menu.options[2].setsMines;
-		break;
-	}
-
+	int fieldWidth = menu.options[(int)difficulty].setsMinefieldSize.x;
+	int fieldHeight = menu.options[(int)difficulty].setsMinefieldSize.y;
+	int mineCount = menu.options[(int)difficulty].setsMines;
+	 
 	*this = Minefield(fieldWidth, fieldHeight, mineCount);
 }
 
@@ -239,6 +228,7 @@ void Minefield::draw(Graphics & gfx)
 			field[y*width + x].draw(gfx, isExploded);
 		}
 	}
+	minesLeftDisplay.draw(gfx, field->getPosition().x, field->getPosition().y - DigitalDisplay::digitHeight - displayOffset);
 }
 
 Vei2 Minefield::getTileLocation(const Vei2& globalLocation) const
@@ -253,6 +243,16 @@ Vei2 Minefield::getTileLocation(const Vei2& globalLocation) const
 bool Minefield::tileExistsAtLocation(const Vei2& globalLocation) const
 {
 	return rectangle.ContainsPoint(globalLocation);
+}
+
+int Minefield::getFlaggedCounter() const
+{
+	return flaggedCounter;
+}
+
+int Minefield::getMineCounter() const
+{
+	return nMines;
 }
 
 void Minefield::revealTileAt(Vei2 & globalLocation)
@@ -325,18 +325,18 @@ bool Minefield::revealSurrounding(Tile & tileIn)
 	int mineCounter = 0;
 
 	// Count flagged
-	int flaggedCounter = 0;
+	int surroundingFlaggedCounter = 0;
 	for (int y = revealStart.y; y <= revealEnd.y; ++y) {
 		for (int x = revealStart.x; x <= revealEnd.x; ++x) {
 			Tile& adjacentTile = field[y*width + x];
 			if (adjacentTile.getState() == Tile::State::Flagged) {
-				++flaggedCounter;
+				++surroundingFlaggedCounter;
 			}
 		}
 	}
 
 	// It's okay to reveal surrounding mines
-	if (flaggedCounter == tileIn.getAdjacentMines()) {
+	if (surroundingFlaggedCounter == tileIn.getAdjacentMines()) {
 		for (int y = revealStart.y; y <= revealEnd.y; ++y) {
 			for (int x = revealStart.x; x <= revealEnd.x; ++x) {
 				Tile& adjacentTile = field[y*width + x];
@@ -361,16 +361,22 @@ void Minefield::revealOrFlagAt(const Vei2 & globalLocation)
 		revealSurrounding(tileIn);
 	}
 	else if (tileIn.getState() == Tile::State::Hidden || tileIn.getState() == Tile::State::Flagged) {
-		tileIn.flag();
+		flagTileAt(globalLocation);		
 	}
 }
 
-void Minefield::flagTileAt(Vei2 & globalLocation)
+void Minefield::flagTileAt(const Vei2 & globalLocation)
 {
 	if (!isExploded) {
 		Vei2 tileLocation;
 		tileLocation = getTileLocation(globalLocation);
-		field[tileLocation.y * width + tileLocation.x].flag();
+		if (field[tileLocation.y * width + tileLocation.x].flag()) {
+			++flaggedCounter;
+		}
+		else {
+			--flaggedCounter;
+		}	
+		updateDisplay();
 	}
 }
 
@@ -460,4 +466,9 @@ int Minefield::getAdjacentMines(const Tile& tileIn) const
 	}
 
 	return mineCounter;
+}
+
+void Minefield::updateDisplay()
+{
+	minesLeftDisplay = DigitalDisplay(nMines - flaggedCounter);
 }

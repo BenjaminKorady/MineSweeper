@@ -36,7 +36,7 @@ private:
 			}
 			assert(portions < 0b10000000);
 		}		
-		void draw(Graphics& gfx, int x, int y) {
+		void draw(Graphics& gfx, int x, int y) const {
 			unsigned char currentPortionOn = 0b01000000;
 			for (int p = 0; p < (int)Portion::SIZE; ++p) {
 				drawPortion(gfx, Portion(p), bool(portions & currentPortionOn), x, y);
@@ -49,7 +49,7 @@ private:
 		static constexpr int width = 11;
 
 	private:
-		void drawPortion(Graphics& gfx, Portion portion, bool isOn, int x, int y) {
+		void drawPortion(Graphics& gfx, Portion portion, bool isOn, int x, int y) const {
 			const Color c = isOn ? on : off;
 			switch (portion) {
 			case Portion::top: {
@@ -241,8 +241,11 @@ private:
 	};
 
 public:
+	NumberSprite() = default;
 	NumberSprite(int value);
-	void draw(Graphics& gfx, int x, int y);
+	NumberSprite(int value, int size);
+	void draw(Graphics& gfx, int x, int y) const;
+	int getValue() const;
 private:
 	int value;
 	std::vector<Digit> digits;
