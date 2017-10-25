@@ -45,7 +45,7 @@ private:
 		}
 
 	private:
-
+		static constexpr int width = 10;
 	private:
 		void drawPortion(Graphics& gfx, Portion portion, bool isOn, int x, int y) {
 			Color c = isOn ? on : off;
@@ -74,7 +74,7 @@ private:
 					gfx.PutPixel(x + 4, y + 2, c);
 					gfx.PutPixel(x + 6, y + 2, c);
 				}
-			}
+			} break;
 			case Portion::topLeft: {
 				gfx.PutPixel(x    , y + 1, c);
 				gfx.PutPixel(x + 1, y + 2, c);
@@ -99,7 +99,137 @@ private:
 					gfx.PutPixel(x + 1, y + 7, c);
 					gfx.PutPixel(x, y + 8, c);
 				}
-			}
+			} break;
+			case Portion::topRight: {
+				gfx.PutPixel(width + (x    ), y + 1, c);
+				gfx.PutPixel(width + (x - 1), y + 2, c);
+				gfx.PutPixel(width + (x    ), y + 3, c);
+				gfx.PutPixel(width + (x - 2), y + 3, c);
+				gfx.PutPixel(width + (x - 1), y + 4, c);
+				gfx.PutPixel(width + (x    ), y + 5, c);
+				gfx.PutPixel(width + (x - 2), y + 5, c);
+				gfx.PutPixel(width + (x - 1), y + 6, c);
+				gfx.PutPixel(width + (x    ), y + 7, c);
+				gfx.PutPixel(width + (x - 2), y + 7, c);
+				gfx.PutPixel(width + (x - 1), y + 8, c);
+				gfx.PutPixel(width + (x    ), y + 9, c);
+				if (isOn) {
+					gfx.PutPixel(width + (x    ), y + 2, c);
+					gfx.PutPixel(width + (x - 1), y + 3, c);
+					gfx.PutPixel(width + (x    ), y + 4, c);
+					gfx.PutPixel(width + (x - 2), y + 4, c);
+					gfx.PutPixel(width + (x - 1), y + 5, c);
+					gfx.PutPixel(width + (x    ), y + 6, c);
+					gfx.PutPixel(width + (x - 2), y + 6, c);
+					gfx.PutPixel(width + (x - 1), y + 7, c);
+					gfx.PutPixel(width + (x    ), y + 8, c);
+				}
+			} break;
+			case Portion::center: {
+				gfx.PutPixel(x + 3, y + 9, c);
+				gfx.PutPixel(x + 5, y + 9, c);
+				gfx.PutPixel(x + 7, y + 9, c);
+				gfx.PutPixel(x + 9, y + 9, c);
+				gfx.PutPixel(x + 2, y + 10, c);
+				gfx.PutPixel(x + 4, y + 10, c);
+				gfx.PutPixel(x + 6, y + 10, c);
+				gfx.PutPixel(x + 8, y + 10, c);
+				gfx.PutPixel(x + 10, y + 10, c);
+				gfx.PutPixel(x + 3, y + 11, c);
+				gfx.PutPixel(x + 5, y + 11, c);
+				gfx.PutPixel(x + 7, y + 11, c);
+				gfx.PutPixel(x + 9, y + 11, c);
+				if (isOn) {
+					gfx.PutPixel(x + 2, y + 9, c);
+					gfx.PutPixel(x + 4, y + 9, c);
+					gfx.PutPixel(x + 6, y + 9, c);
+					gfx.PutPixel(x + 8, y + 9, c);
+					gfx.PutPixel(x + 1, y + 10, c);
+					gfx.PutPixel(x + 3, y + 10, c);
+					gfx.PutPixel(x + 5, y + 10, c);
+					gfx.PutPixel(x + 7, y + 10, c);
+					gfx.PutPixel(x + 9, y + 10, c);
+					gfx.PutPixel(x + 2, y + 11, c);
+					gfx.PutPixel(x + 4, y + 11, c);
+					gfx.PutPixel(x + 6, y + 11, c);
+					gfx.PutPixel(x + 8, y + 11, c);
+				}
+			} break;
+			case Portion::bottomLeft: {
+				gfx.PutPixel(x    , y + 1 + 10, c);
+				gfx.PutPixel(x + 1, y + 2 + 10, c);
+				gfx.PutPixel(x    , y + 3 + 10, c);
+				gfx.PutPixel(x + 2, y + 3 + 10, c);
+				gfx.PutPixel(x + 1, y + 4 + 10, c);
+				gfx.PutPixel(x    , y + 5 + 10, c);
+				gfx.PutPixel(x + 2, y + 5 + 10, c);
+				gfx.PutPixel(x + 1, y + 6 + 10, c);
+				gfx.PutPixel(x    , y + 7 + 10, c);
+				gfx.PutPixel(x + 2, y + 7 + 10, c);
+				gfx.PutPixel(x + 1, y + 8 + 10, c);
+				gfx.PutPixel(x    , y + 9 + 10, c);
+				if (isOn) {
+					gfx.PutPixel(x    , y + 2 + 10, c);
+					gfx.PutPixel(x + 1, y + 3 + 10, c);
+					gfx.PutPixel(x    , y + 4 + 10, c);
+					gfx.PutPixel(x + 2, y + 4 + 10, c);
+					gfx.PutPixel(x + 1, y + 5 + 10, c);
+					gfx.PutPixel(x    , y + 6 + 10, c);
+					gfx.PutPixel(x + 2, y + 6 + 10, c);
+					gfx.PutPixel(x + 1, y + 7 + 10, c);
+					gfx.PutPixel(x    , y + 8 + 10, c);
+				}
+			} break;
+			case Portion::bottomRight: {
+				gfx.PutPixel(width + (x)    , y + 1 + 10, c);
+				gfx.PutPixel(width + (x - 1), y + 2 + 10, c);
+				gfx.PutPixel(width + (x)    , y + 3 + 10, c);
+				gfx.PutPixel(width + (x - 2), y + 3 + 10, c);
+				gfx.PutPixel(width + (x - 1), y + 4 + 10, c);
+				gfx.PutPixel(width + (x)    , y + 5 + 10, c);
+				gfx.PutPixel(width + (x - 2), y + 5 + 10, c);
+				gfx.PutPixel(width + (x - 1), y + 6 + 10, c);
+				gfx.PutPixel(width + (x)    , y + 7 + 10, c);
+				gfx.PutPixel(width + (x - 2), y + 7 + 10, c);
+				gfx.PutPixel(width + (x - 1), y + 8 + 10, c);
+				gfx.PutPixel(width + (x)    , y + 9 + 10, c);
+				if (isOn) {
+					gfx.PutPixel(width + (x)    , y + 2 + 10, c);
+					gfx.PutPixel(width + (x - 1), y + 3 + 10, c);
+					gfx.PutPixel(width + (x)    , y + 4 + 10, c);
+					gfx.PutPixel(width + (x - 2), y + 4 + 10, c);
+					gfx.PutPixel(width + (x - 1), y + 5 + 10, c);
+					gfx.PutPixel(width + (x)    , y + 6 + 10, c);
+					gfx.PutPixel(width + (x - 2), y + 6 + 10, c);
+					gfx.PutPixel(width + (x - 1), y + 7 + 10, c);
+					gfx.PutPixel(width + (x)    , y + 8 + 10, c);
+				}
+			} break;
+			case Portion::bottom: {
+				gfx.PutPixel(x + 1, y + 2 + 18, c);
+				gfx.PutPixel(x + 3, y + 2 + 18, c);
+				gfx.PutPixel(x + 5, y + 2 + 18, c);
+				gfx.PutPixel(x + 7, y + 2 + 18, c);
+				gfx.PutPixel(x + 9, y + 2 + 18, c);
+				gfx.PutPixel(x + 2, y + 1 + 18, c);
+				gfx.PutPixel(x + 4, y + 1 + 18, c);
+				gfx.PutPixel(x + 6, y + 1 + 18, c);
+				gfx.PutPixel(x + 8, y + 1 + 18, c);
+				gfx.PutPixel(x + 3, y + 0 + 18, c);
+				gfx.PutPixel(x + 5, y + 0 + 18, c);
+				gfx.PutPixel(x + 7, y + 0 + 18, c);
+				if (isOn) {
+					gfx.PutPixel(x + 2, y + 2 + 18, c);
+					gfx.PutPixel(x + 4, y + 2 + 18, c);
+					gfx.PutPixel(x + 6, y + 2 + 18, c);
+					gfx.PutPixel(x + 8, y + 2 + 18, c);
+					gfx.PutPixel(x + 3, y + 1 + 18, c);
+					gfx.PutPixel(x + 5, y + 1 + 18, c);
+					gfx.PutPixel(x + 7, y + 1 + 18, c);
+					gfx.PutPixel(x + 4, y + 0 + 18, c);
+					gfx.PutPixel(x + 6, y + 0 + 18, c);
+				}
+			} break;
 			default: {}
 
 			}

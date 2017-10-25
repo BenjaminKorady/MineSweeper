@@ -87,7 +87,7 @@ void Game::ComposeFrame()
 	if (gameState == State::Test) {
 		for (int i = 0; i < 10; ++i) {
 			NumberSprite num(i);
-			num.draw(gfx, 200 + 12*i, 200);
+			num.draw(gfx, 200 + 13*i, 200);
 		}
 
 	}
