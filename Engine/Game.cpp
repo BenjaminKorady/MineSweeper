@@ -27,7 +27,7 @@ Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
 	gfx(wnd),
-	gameState(State::Test),
+	gameState(State::InMenu),
 	menu()
 {
 }
@@ -43,7 +43,6 @@ void Game::Go()
 void Game::UpdateModel()
 {
 	switch (gameState) {
-
 	case State::Playing: {
 			if (minefield.isExploded) {
 				gameState = State::Loss;
@@ -51,7 +50,6 @@ void Game::UpdateModel()
 			else if (minefield.revealedAll()) {
 				gameState = State::Win;
 			}
-
 			HandlePlayingMouseInput();
 			HandlePlayingKeyboardInput();
 
@@ -84,25 +82,20 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	if (gameState == State::Test) {
-		NumberSprite num = 1234;
-		num.draw(gfx, 0, 0);
+	if (gameState == State::InMenu) {
+		menu.Draw(gfx);
 	}
 	else {
-		if (gameState == State::InMenu) {
-			menu.Draw(gfx);
-		}
-		else {
-			minefield.draw(gfx);
-		}
+		minefield.draw(gfx);
 
-		switch (gameState) {
+	}
 
-		case State::Win:
-			SpriteCodex::drawGameWin(gfx); break;
-		case State::Loss:
-			SpriteCodex::drawGameLoss(gfx); break;
-		}
+	switch (gameState) {
+
+	case State::Win:
+		SpriteCodex::drawGameWin(gfx); break;
+	case State::Loss:
+		SpriteCodex::drawGameLoss(gfx); break;
 	}
 }
 

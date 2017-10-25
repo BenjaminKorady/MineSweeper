@@ -25,6 +25,7 @@
 #include "Graphics.h"
 #include "Minefield.h"
 #include "Menu.h"
+#include <chrono>
 
 // TODO: Implement mine counter
 // TODO: Implement timer
@@ -66,8 +67,11 @@ private:
 	/********************************/
 	/*  User Variables              */
 	/********************************/
+	bool gameHasStarted = false;
 	Menu menu;
 	Minefield minefield;
 	State gameState;
 	Vei2 lastMousePos;
+	int elapsedTime = 0;
+
 };
