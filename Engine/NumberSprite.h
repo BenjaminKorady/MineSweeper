@@ -243,7 +243,6 @@ private:
 
 public:
 	NumberSprite() = default;
-	NumberSprite(int value);
 	NumberSprite(int value, int size);
 	void draw(Graphics& gfx, int x, int y) const;
 	int getValue() const;
