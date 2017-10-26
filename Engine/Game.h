@@ -28,8 +28,7 @@
 #include <chrono>
 #include "DigitalDisplay.h"
 
-// TODO: ONLY Click + Release on the same tile reveals 
-// TODO: Implement Custom difficulty
+// TODO: Add Left+Right mouse click
 
 class Game
 {

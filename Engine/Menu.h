@@ -11,7 +11,6 @@ public:
 			Beginner,
 			Intermediate,
 			Expert,
-			Custom,
 			None
 		};
 
@@ -31,7 +30,7 @@ public:
 	};
 
 public:
-	static constexpr int maxOptions = 4;
+	static constexpr int maxOptions = 3;
 
 	Menu();
 

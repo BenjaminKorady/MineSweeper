@@ -228,7 +228,6 @@ Minefield::Minefield(const Menu& menu)
 {
 	Menu::Option::Name difficulty = menu.getSelectedOption();
 
-	assert(difficulty != Menu::Option::Name::Custom);	
 	assert(difficulty != Menu::Option::Name::None);
 
 	int fieldWidth = menu.options[(int)difficulty].setsMinefieldSize.x;
