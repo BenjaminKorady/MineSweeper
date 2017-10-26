@@ -478,7 +478,9 @@ Minefield::Tile & Minefield::tileAt(const Vei2 & tileLocation)
 
 void Minefield::hidePartiallyRevealedTile()
 {
-	partiallyRevealedTilePtr->hide();
+	if (partiallyRevealedTilePtr->getState() == Tile::State::PartiallyRevealed) {
+		partiallyRevealedTilePtr->hide();
+	}
 }
 
 bool Minefield::revealedAll() const
