@@ -11,6 +11,7 @@ public:
 			Beginner,
 			Intermediate,
 			Expert,
+			SIZE,
 			None
 		};
 
@@ -30,7 +31,7 @@ public:
 	};
 
 public:
-	static constexpr int maxOptions = 3;
+	static constexpr int maxOptions = (int) Option::Name::SIZE;
 
 	Menu();
 

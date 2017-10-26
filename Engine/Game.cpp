@@ -193,12 +193,13 @@ void Game::HandlePlayingMouseInput()
 				minefield.hidePartiallyRevealedTile();
 			}
 		}
-		else if (e.GetType() == Mouse::Event::Type::RRelease) {
+
+		else if (e.GetType() == Mouse::Event::Type::RPress) {
 			if (minefield.tileExistsAtLocation(e.GetPos())) {
 				minefield.flagTileAt(e.GetPos());
 			}
 		}
-		else if (e.GetType() == Mouse::Event::Type::MRelease) {
+		else if ((e.GetType() == Mouse::Event::Type::MPress) || (wnd.mouse.LeftIsPressed() && wnd.mouse.RightIsPressed()) ) {
 			if (minefield.tileExistsAtLocation(e.GetPos())) {
 				minefield.revealOrFlagAt(e.GetPos());
 			}

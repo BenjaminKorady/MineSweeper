@@ -38,7 +38,6 @@ public:
 		Win,
 		Loss,
 		InMenu,
-		Test
 	};
 	
 public:
