@@ -350,6 +350,7 @@ void Minefield::revealTileAt(Vei2 & globalLocation)
 				isExploded = true;
 			}
 			revealRecursively(tileAtLocation);
+			partiallyRevealedTilePtr = nullptr;
 		}
 	}
 }
@@ -478,8 +479,9 @@ Minefield::Tile & Minefield::tileAt(const Vei2 & tileLocation)
 
 void Minefield::hidePartiallyRevealedTile()
 {
-	if (partiallyRevealedTilePtr->getState() == Tile::State::PartiallyRevealed) {
+	if (partiallyRevealedTilePtr != nullptr) {
 		partiallyRevealedTilePtr->hide();
+		partiallyRevealedTilePtr = nullptr;
 	}
 }
 
