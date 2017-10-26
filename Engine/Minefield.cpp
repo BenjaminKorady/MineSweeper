@@ -26,6 +26,9 @@ void Minefield::Tile::draw(Graphics & gfx, bool isExploded) const
 		case State::Hidden:
 			SpriteCodex::drawTileButton(position, gfx);
 			break;
+		case State::PartiallyRevealed: {
+			SpriteCodex::drawTile0(position, gfx); 
+		} break;
 		case State::Revealed:
 			if (hasMine()) {
 				SpriteCodex::drawTileMine(position, gfx);
@@ -164,8 +167,18 @@ void Minefield::Tile::clearMine()
 
 void Minefield::Tile::reveal()
 {
-	assert(state == State::Hidden);
+	assert(state == State::Hidden || state == State::PartiallyRevealed);
 	state = State::Revealed;
+}
+
+void Minefield::Tile::partiallyReveal()
+{
+	state = State::PartiallyRevealed;
+}
+
+void Minefield::Tile::hide()
+{
+	state = State::Hidden;
 }
 
 bool Minefield::Tile::flag()
@@ -250,7 +263,7 @@ void Minefield::generateMines(Tile& clickedTile)
 				field[y*width + x].setAdjacentMines(n);
 			}
 		}
-	// Keep generating a new minefield unless clickedTile generates with 0 adjacent mine or has mine (allow dying on first click because that's always fun) 
+	// Keep generating a new minefield unless clicked tile generates with 0 adjacent mine or has mine (allow dying on first click because that's always fun) 
 	} while ((getAdjacentMines(clickedTile) != 0)  && !clickedTile.hasMine());
 	
 	minesAreGenerated = true;
@@ -276,6 +289,21 @@ void Minefield::draw(Graphics & gfx)
 	minesLeftDisplay.draw(gfx, field->getPosition().x, field->getPosition().y - DigitalDisplay::digitHeight - displayOffset);
 }
 
+void Minefield::partiallyRevealTile(Tile & tileIn)
+{
+	tileIn.partiallyReveal();
+}
+
+void Minefield::partiallyRevealTileAt(Vei2 & globalLocation)
+{
+	const Vei2 tileLocation = getTileLocation(globalLocation);
+	Tile& tile = tileAt(tileLocation);
+	if (tile.getState() == Tile::State::Hidden) {
+		tile.partiallyReveal();
+		partiallyRevealedTilePtr = &tile;
+	}
+}
+
 Vei2 Minefield::getTileLocation(const Vei2& globalLocation) const
 {
 	assert(rectangle.ContainsPoint(globalLocation));
@@ -288,6 +316,14 @@ Vei2 Minefield::getTileLocation(const Vei2& globalLocation) const
 bool Minefield::tileExistsAtLocation(const Vei2& globalLocation) const
 {
 	return rectangle.ContainsPoint(globalLocation);
+}
+
+bool Minefield::tileAtLocationIsPartiallyRevealed(const Vei2 & globalLocation) const
+{
+	const Vei2 tileLocation = getTileLocation(globalLocation);
+	const Tile& tile = tileAt(tileLocation);
+
+	return tile.getState() == Tile::State::PartiallyRevealed;
 }
 
 int Minefield::getFlaggedCounter() const
@@ -307,7 +343,8 @@ void Minefield::revealTileAt(Vei2 & globalLocation)
 		tileLocation = getTileLocation(globalLocation);
 		Tile& tileAtLocation = field[tileLocation.y * width + tileLocation.x];
 
-		if (tileAtLocation.getState() == Minefield::Tile::State::Hidden) {
+		if (tileAtLocation.getState() == Minefield::Tile::State::Hidden ||
+			tileAtLocation.getState() == Minefield::Tile::State::PartiallyRevealed) {
 			bool okayReveal = !tileAtLocation.hasMine();
 			if (!okayReveal) {
 				isExploded = true;
@@ -322,7 +359,8 @@ void Minefield::revealRecursively(Tile & tileIn)
 	if (getRevealedCounter() == 0) {
 		generateMines(tileIn);
 	}
-	if (tileIn.getState() == Tile::State::Hidden) {
+	if (tileIn.getState() == Tile::State::Hidden ||
+		tileIn.getState() == Tile::State::PartiallyRevealed) {
 		tileIn.reveal();
 		if (tileIn.hasMine()) {
 			isExploded = true;
@@ -436,6 +474,11 @@ const Minefield::Tile & Minefield::tileAt(const Vei2 & tileLocation) const
 Minefield::Tile & Minefield::tileAt(const Vei2 & tileLocation)
 {
 	return field[tileLocation.y * width + tileLocation.x];
+}
+
+void Minefield::hidePartiallyRevealedTile()
+{
+	partiallyRevealedTilePtr->hide();
 }
 
 bool Minefield::revealedAll() const

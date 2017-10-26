@@ -10,9 +10,10 @@ private:
 	class Tile {
 	public:
 		enum class State {
-			Hidden = 0,
-			Revealed = 1,
-			Flagged = 2
+			Hidden,
+			PartiallyRevealed,
+			Revealed,
+			Flagged,
 		};
 
 		Tile();
@@ -26,6 +27,8 @@ private:
 		void spawnMine();
 		void clearMine();
 		void reveal();
+		void partiallyReveal();
+		void hide();
 		bool flag();
 		State getState() const;
 		bool hasMine() const;
@@ -51,6 +54,8 @@ public:
 	void generateMines(Tile& clickedTile);
 	void clearMines();
 	void draw(Graphics& gfx);
+	void partiallyRevealTile(Tile& tileIn);
+	void partiallyRevealTileAt(Vei2& globalLocation);
 	void revealTileAt(Vei2& globalLocation);
 	void revealRecursively(Tile& tileIn);
 	bool revealSurrounding(Tile& tileIn);
@@ -58,11 +63,13 @@ public:
 	void flagTileAt(const Vei2& globalLocation);
 	const Tile& tileAt(const Vei2& tileLocation) const;
 	Tile& tileAt(const Vei2& tileLocation);
+	void hidePartiallyRevealedTile();
 	void restart();
 
 
 	bool revealedAll() const;
 	bool tileExistsAtLocation(const Vei2& globalLocation) const;
+	bool tileAtLocationIsPartiallyRevealed(const Vei2& globalLocation) const;
 	int getFlaggedCounter() const;
 	int getMineCounter() const;
 	int getRevealedCounter() const;
@@ -80,6 +87,7 @@ private:
 	void updateDisplay();
 
 	Tile* field = nullptr;
+	Tile* partiallyRevealedTilePtr = nullptr;
 	int width;
 	int height;
 	Vei2 position = Vei2(0, 0);

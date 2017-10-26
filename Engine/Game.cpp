@@ -179,12 +179,18 @@ void Game::HandlePlayingMouseInput()
 {
 	while (!wnd.mouse.IsEmpty()) {
 		const Mouse::Event e = wnd.mouse.Read();
+		if (e.GetType() == Mouse::Event::Type::LPress && minefield.tileExistsAtLocation(e.GetPos())) {
+			minefield.partiallyRevealTileAt(e.GetPos());
+		}
 		if (e.GetType() == Mouse::Event::Type::LRelease) {
-			if (minefield.tileExistsAtLocation(e.GetPos())) {
+			if (minefield.tileExistsAtLocation(e.GetPos()) && minefield.tileAtLocationIsPartiallyRevealed(e.GetPos()) ) {
 				if (minefield.getRevealedCounter() == 0) {
 					gameStartTime = std::chrono::steady_clock::now();
 				}
 				minefield.revealTileAt(e.GetPos());
+			}
+			else {
+				minefield.hidePartiallyRevealedTile();
 			}
 		}
 		else if (e.GetType() == Mouse::Event::Type::RRelease) {
