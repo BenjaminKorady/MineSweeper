@@ -72,6 +72,7 @@ private:
 	public:
 		static constexpr int spacing = 2;
 		static constexpr int width = 11;
+		static constexpr int height = 21;
 
 	private:
 		/**
@@ -282,6 +283,7 @@ public:
 	void draw(Graphics& gfx, int x, int y) const;
 	int getValue() const;
 	int getWidth() const;
+	static int getHeight();
 
 private:
 	int value;

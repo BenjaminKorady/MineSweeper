@@ -285,7 +285,7 @@ void Minefield::draw(Graphics & gfx)
 			field[y*width + x].draw(gfx, isExploded);
 		}
 	}
-	minesLeftDisplay.draw(gfx, field->getPosition().x, field->getPosition().y - DigitalDisplay::digitHeight - displayOffset);
+	minesLeftDisplay.draw(gfx, field->getPosition().x, field->getPosition().y - DigitalDisplay::getHeight() - displayOffset);
 }
 
 void Minefield::partiallyRevealTile(Tile & tileIn)

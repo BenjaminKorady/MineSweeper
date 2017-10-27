@@ -15,17 +15,19 @@ public:
 	DigitalDisplay();
 	DigitalDisplay(int value, int displayedDigits = defaultSize);
 
-	void draw(Graphics& gfx, int x, int y) const;
-	int getValue() const;
-	int getWidth() const;
-	int getHeight() const;
 	void operator++();
 	void operator--();
 
-	static constexpr int digitHeight = 21;
-	static constexpr int maxDisplayedValue = 999;
+	void draw(Graphics& gfx, int x, int y) const;
+	int getValue() const;
+	int getWidth() const;
+	static int getHeight();
+
+
 private:
 	static constexpr int defaultSize = 3;
+	static constexpr int maxDisplayedValue = 999;
+
 private:
 	int displayedDigits;
 	NumberSprite displayedNumber;

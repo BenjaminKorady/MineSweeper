@@ -69,3 +69,13 @@ int NumberSprite::getWidth() const
 {
 	return (Digit::width + Digit::spacing) * (int) digits.size() - Digit::spacing ;
 }
+
+/**
+	Returns the height of the sprite
+	
+	@return height
+*/
+int NumberSprite::getHeight()
+{
+	return Digit::height;
+}
