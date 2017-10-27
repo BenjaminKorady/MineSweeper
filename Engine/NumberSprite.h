@@ -1,3 +1,10 @@
+/**
+	Handles drawing of the numbers on a digital display
+
+	@author Benjamin Korady
+	@version 1.0 27/10/2017
+*/
+
 #pragma once
 #include "Graphics.h"
 #include <assert.h>
@@ -5,7 +12,13 @@
 
 class NumberSprite {
 private:
+	/**
+		Manages each separate digit
+	*/
 	class Digit {
+		/**
+			Each digit consists of 7 portions, which portions are on/off (glowing) determines the digit
+		*/
 		enum class Portion {
 			top,
 			topLeft,
@@ -18,10 +31,14 @@ private:
 		};
 
 	public:
+		/**
+			Constructs the Digit object assigning its portions
+		*/
 		Digit(int value):
 			value(value)
 		{
 			assert(value <= 9 && value >= -1);
+			// Each bit represents whether a portion is glowing or not (1, 0)
 			switch (value) {
 			case -1: portions = 0b0001000; break;	// Special case (negation symbol)
 			case 0: portions = 0b1110111; break;
@@ -36,12 +53,19 @@ private:
 			case 9: portions = 0b1111011; break;
 			}
 			assert(portions < 0b10000000);
-		}		
+		}	
+		/**
+			Draws a digit at input position
+
+			@param gfx Graphics processor
+			@param x x-value of the position where the digit is to be drawn
+			@param y y-value of the position where the digit is to be drawn
+		*/
 		void draw(Graphics& gfx, int x, int y) const {
 			unsigned char currentPortionOn = 0b01000000;
 			for (int p = 0; p < (int)Portion::SIZE; ++p) {
-				drawPortion(gfx, Portion(p), bool(portions & currentPortionOn), x, y);
-				currentPortionOn = currentPortionOn >> 1;
+				drawPortion(gfx, Portion(p), bool(portions & currentPortionOn), x, y); // Check if current portion is on and draw accordingly
+				currentPortionOn = currentPortionOn >> 1; // Go to next portion
 			}
 		}
 
@@ -50,7 +74,17 @@ private:
 		static constexpr int width = 11;
 
 	private:
-		void drawPortion(Graphics& gfx, Portion portion, bool isOn, int x, int y) const {
+		/**
+			Draws a single portion of a digit
+
+			@param gfx Graphics processor
+			@param portion The portion which is to be drawn
+			@param isOn Whether or not the portion should be glowing or not
+			@param x x-value of the position where the portion is to be drawn
+			@param y y-value of the position where the portion is to be drawn
+		*/
+		void drawPortion(Graphics& gfx, Portion portion, bool isOn, int x, int y) const {	
+			// "on" color draws bright red, "off" draws dark red every other pixel
 			const Color c = isOn ? on : off;
 			switch (portion) {
 			case Portion::top: {
@@ -233,10 +267,10 @@ private:
 			}
 		}
 
+	private:
 		unsigned char portions;
 		int value;
 
-		static constexpr Color background = Colors::Black;
 		static constexpr Color on = Colors::Red;
 		static constexpr Color off = Color(123, 0, 0);
 	};
@@ -244,9 +278,11 @@ private:
 public:
 	NumberSprite() = default;
 	NumberSprite(int value, int size);
+
 	void draw(Graphics& gfx, int x, int y) const;
 	int getValue() const;
 	int getWidth() const;
+
 private:
 	int value;
 	std::vector<Digit> digits;

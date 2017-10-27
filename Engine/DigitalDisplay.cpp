@@ -12,7 +12,7 @@ DigitalDisplay::DigitalDisplay(int value, int displayedDigits)
 {
 }
 
-void DigitalDisplay::draw(Graphics & gfx, int x, int y)
+void DigitalDisplay::draw(Graphics & gfx, int x, int y) const
 {
 	displayedNumber.draw(gfx, x, y);
 }

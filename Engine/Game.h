@@ -28,8 +28,6 @@
 #include <chrono>
 #include "DigitalDisplay.h"
 
-// TODO: Add Left+Right mouse click
-
 class Game
 {
 public:
@@ -45,13 +43,21 @@ public:
 	Game( const Game& ) = delete;
 	Game& operator=( const Game& ) = delete; 
 	void Go();
+public:
+	void restartGame();
+	std::chrono::steady_clock::time_point gameStartTime;
+
+
 private:
 	void ComposeFrame();
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
 	/********************************/
-	void restartGame();
+	
+	template<typename I, typename S>
+	void handleUserInput(I inputType, S gameState);
+
 	void HandlePlayingMouseInput();
 	void HandlePlayingKeyboardInput();
 	void HandleGameOverMouseInput();
@@ -69,9 +75,13 @@ private:
 	State gameState;
 	Vei2 lastMousePos;
 	DigitalDisplay timeDisplay;
-	std::chrono::steady_clock::time_point gameStartTime;
 	std::chrono::steady_clock::time_point timeNow;
 	std::chrono::steady_clock::time_point gameEndTime;
 	int elapsedTime = 0;
 
 };
+
+template<typename I, typename S>
+inline void Game::handleUserInput(I inputType, S gameState)
+{
+}
