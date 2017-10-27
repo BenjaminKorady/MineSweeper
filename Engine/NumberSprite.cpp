@@ -1,6 +1,12 @@
 #include "NumberSprite.h"
 #include <algorithm>
 
+/**
+	Constructs a number sprite
+
+	@param value Value of the number which is to be drawn
+	@param size The size of the number (in digits)
+*/
 NumberSprite::NumberSprite(int value, int size)
 	:
 	value(value)
@@ -9,14 +15,14 @@ NumberSprite::NumberSprite(int value, int size)
 
 	// Push each digit into digits vector
 	do {
-		int digit = abs(value % 10);
-		digits.push_back(Digit(digit));
+		int digitValue = abs(value % 10);
+		digits.push_back(Digit(digitValue));
 		value = value / 10;
 		++digitCounter;
 	} while (value != 0);
 	
 	// Fill the rest of the display with 0s if all digits have been pushed
-	// (int)(this->value < 0) means "push one 0 less if the number is negative" to reserve a slot for '-' symbol
+	// "- (int)(this->value < 0)" means "push one 0 less if the number is negative" to reserve a slot for '-' symbol
 	while (digitCounter < size - (int)(this->value < 0)) { 
 		digits.push_back(Digit(0));
 		++digitCounter;
@@ -30,6 +36,13 @@ NumberSprite::NumberSprite(int value, int size)
 	std::reverse(digits.begin(), digits.end());
 }
 
+/**
+	Draws the sprite to the screen
+
+	@param gfx Graphics object
+	@param x x-value of the position where the sprite is to be drawn
+	@param y y-value of the position where the sprite is to be drawn
+*/
 void NumberSprite::draw(Graphics & gfx, int x, int y) const
 {
 	for (int i = 0; i < (int)digits.size(); ++i) {
@@ -37,11 +50,21 @@ void NumberSprite::draw(Graphics & gfx, int x, int y) const
 	}
 }
 
+/**
+	Returns the number to be drawn onto the screen
+
+	@return value
+*/
 int NumberSprite::getValue() const
 {
 	return value;
 }
 
+/**
+	Returns the width of the sprite
+
+	@return width
+*/
 int NumberSprite::getWidth() const
 {
 	return (Digit::width + Digit::spacing) * (int) digits.size() - Digit::spacing ;
