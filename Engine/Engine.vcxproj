@@ -154,7 +154,6 @@
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundEffect.h" />
     <ClInclude Include="SpriteCodex.h" />
-    <ClInclude Include="Tile.h" />
     <ClInclude Include="DigitalDisplay.h" />
     <ClInclude Include="Vei2.h" />
   </ItemGroup>

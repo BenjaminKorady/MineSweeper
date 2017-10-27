@@ -1,3 +1,10 @@
+/**
+	Manages the Sprites that are to be drawn onto the screen via Graphics::PutPixel calls
+
+	@author Chili
+	@author Benjamin Korady
+	@version 1.1 27/10/2017
+*/
 #pragma once
 
 #include "Graphics.h"
@@ -6,6 +13,9 @@
 class SpriteCodex
 {
 public:
+	// PART OF CHILI'S CODE ORIGINAL 
+	// *****************************
+
 	// width and height of all tiles
 	static constexpr int tileSize = 16;
 	// base color for all tiles
@@ -23,9 +33,11 @@ public:
 	static void drawTileButton( const Vei2& pos,Graphics& gfx );
 	static void drawTileCross( const Vei2& pos,Graphics& gfx );
 	static void drawTileFlag( const Vei2& pos,Graphics& gfx );
+
+	// PART OF BEN'S ADDED CODE
+	// ************************
 	static void drawTileMine( const Vei2& pos,Graphics& gfx );
 	static void drawTileMineRed( const Vei2& pos,Graphics& gfx );
-
 	static void drawGameWin(Graphics& gfx);
 	static void drawGameLoss(Graphics& gfx);
 	static void drawBeginner(int x, int y, Graphics& gfx);
