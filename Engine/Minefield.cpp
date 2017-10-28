@@ -5,30 +5,51 @@
 #include <algorithm>
 #include <assert.h>
 
+/**
+	Draws a Tile to the screen (If minefield is exploded, draws hidden mines as well)
 
-Minefield::Tile::Tile()
-	:
-	position(Vei2(0,0))
+	@param gfx Graphics processor
+	@param isExploded Whether or not the minefield is already exploded
+*/
+void Minefield::Tile::draw(Graphics & gfx, bool minefieldIsExploded) const
 {
-}
-
-Minefield::Tile::Tile(Vei2 posIn)
-	:
-	position(posIn)
-{
-}
-
-void Minefield::Tile::draw(Graphics & gfx, bool isExploded) const
-{
+	switch (state) {
+	case State::Hidden:
+		if (hasMine() && minefieldIsExploded) {
+			SpriteCodex::drawTileMine(position, gfx);
+		}
+		SpriteCodex::drawTileButton(position, gfx);
+		break;
+	case State::PartiallyRevealed:
+		SpriteCodex::drawTile0(position, gfx);
+		break;
+	case State::Revealed:
+		if (!hasMine()) {
+			SpriteCodex::drawTileNumber(adjacentMines, position, gfx);
+		}
+		else /* hasMine */ {
+			minefieldIsExploded ?
+				SpriteCodex::drawTileMineRed(position, gfx) : SpriteCodex::drawTileButton(position, gfx);
+		}
+		break;
+	case State::Flagged:
+		SpriteCodex::drawTileButton(position, gfx);
+		SpriteCodex::drawTileFlag(position, gfx);
+		if (minefieldIsExploded && !hasMine()) {
+			SpriteCodex::drawTileCross(position, gfx);
+		}
+		break;
+	}
+	
+	/*
 	if (!isExploded) {
-
 		switch (state) {
 		case State::Hidden:
 			SpriteCodex::drawTileButton(position, gfx);
 			break;
-		case State::PartiallyRevealed: {
+		case State::PartiallyRevealed: 
 			SpriteCodex::drawTile0(position, gfx); 
-		} break;
+			break;
 		case State::Revealed:
 			if (hasMine()) {
 				SpriteCodex::drawTileMine(position, gfx);
@@ -132,6 +153,7 @@ void Minefield::Tile::draw(Graphics & gfx, bool isExploded) const
 		}
 		}
 	}
+	*/
 }
 
 Vei2 Minefield::Tile::getPosition() const

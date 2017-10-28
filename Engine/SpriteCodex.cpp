@@ -1006,6 +1006,23 @@ void SpriteCodex::drawTileFlag( const Vei2& pos,Graphics& gfx )
 	gfx.PutPixel( 11 + pos.x,12 + pos.y,0,0,0 );
 }
 
+void SpriteCodex::drawTileNumber(int number, const Vei2 & pos, Graphics & gfx)
+{
+	assert(number >= 0 && number <= 8);
+	switch (number) {
+	case 0: drawTile0(pos, gfx); break;
+	case 1: drawTile1(pos, gfx); break;
+	case 2: drawTile2(pos, gfx); break;
+	case 3: drawTile3(pos, gfx); break;
+	case 4: drawTile4(pos, gfx); break;
+	case 5: drawTile5(pos, gfx); break;
+	case 6: drawTile6(pos, gfx); break;
+	case 7: drawTile7(pos, gfx); break;
+	case 8: drawTile8(pos, gfx); break;
+
+	}
+}
+
 void SpriteCodex::drawTileMine(const Vei2& pos, Graphics& gfx) {
 
 	int x = pos.x;

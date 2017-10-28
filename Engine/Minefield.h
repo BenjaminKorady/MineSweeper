@@ -1,3 +1,10 @@
+/**
+	Manages the minefield 
+
+	@author Benjamin Korady
+	@version 1.0 27/10/2017
+*/
+
 #pragma once
 
 #include "Graphics.h"
@@ -7,6 +14,9 @@
 
 class Minefield {
 private:
+	/**
+		Manages each Tile of the minefield
+	*/
 	class Tile {
 	public:
 		enum class State {
@@ -16,23 +26,23 @@ private:
 			Flagged,
 		};
 
-		Tile();
-		Tile(Vei2 posIn);
+		Tile() = default;
 		void draw(Graphics& gfx, bool isExploded) const;
 		
-		Vei2 getPosition() const;
 		void setPosition(Vei2 posIn);
 		void setAdjacentMines(int in);
-		int getAdjacentMines() const;
 		void spawnMine();
 		void clearMine();
 		void reveal();
 		void partiallyReveal();
 		void hide();
 		bool flag();
+		void restart();
+
 		State getState() const;
 		bool hasMine() const;
-		void restart();
+		int getAdjacentMines() const;
+		Vei2 getPosition() const;
 
 		static constexpr int width = 16;
 		static constexpr int height	 = 16;

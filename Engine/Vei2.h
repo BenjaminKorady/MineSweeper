@@ -1,3 +1,9 @@
+/**
+	Vector of ints
+	
+	@author Chili
+*/
+
 #pragma once
 
 class Vei2

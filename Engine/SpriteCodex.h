@@ -21,6 +21,7 @@ public:
 	// base color for all tiles
 	static constexpr Color baseColor = { 192,192,192 };
 	// 16x16 tile sprites assume (192,192,192) background and top left origin
+
 	static void drawTile0( const Vei2& pos,Graphics& gfx );
 	static void drawTile1( const Vei2& pos,Graphics& gfx );
 	static void drawTile2( const Vei2& pos,Graphics& gfx );
@@ -36,6 +37,7 @@ public:
 
 	// PART OF BEN'S ADDED CODE
 	// ************************
+	static void drawTileNumber(int number, const Vei2& pos, Graphics& gfx);
 	static void drawTileMine( const Vei2& pos,Graphics& gfx );
 	static void drawTileMineRed( const Vei2& pos,Graphics& gfx );
 	static void drawGameWin(Graphics& gfx);
