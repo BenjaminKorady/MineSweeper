@@ -11,6 +11,7 @@
 #include "Vei2.h"
 #include "Menu.h"
 #include "DigitalDisplay.h"
+#include "SpriteCodex.h"
 
 class Minefield {
 private:
@@ -30,27 +31,22 @@ private:
 		void draw(Graphics& gfx, bool isExploded) const;
 		
 		void setPosition(Vei2 posIn);
-		void setAdjacentMines(int in);
-		void spawnMine();
-		void clearMine();
-		void reveal();
-		void partiallyReveal();
-		void hide();
-		bool flag();
+		void setAdjacentMineCount(int countIn);
+		void setMine(bool set);
+		void setState(State stateIn);
 		void restart();
 
 		State getState() const;
 		bool hasMine() const;
-		int getAdjacentMines() const;
+		int getadjacentMineCount() const;
 		Vei2 getPosition() const;
 
-		static constexpr int width = 16;
-		static constexpr int height	 = 16;
+		static constexpr int size = SpriteCodex::tileSize;
 
 	private:
 
 		Vei2 position;
-		int adjacentMines;
+		int adjacentMineCount;
 		State state = State::Hidden;
 		bool mine = false;
 
@@ -93,7 +89,7 @@ private:
 	bool minesAreGenerated = false;
 private:
 	Vei2 getTileLocation(const Vei2& globalPosition) const;
-	int getAdjacentMines(const Tile& tileIn) const;
+	int getadjacentMineCount(const Tile& tileIn) const;
 	void updateDisplay();
 
 	Tile* field = nullptr;
