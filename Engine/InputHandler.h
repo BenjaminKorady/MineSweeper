@@ -26,13 +26,13 @@ namespace InputHandler {
 				while (!mouse.IsEmpty()) {
 					const Mouse::Event e = mouse.Read();
 					if (e.GetType() == Mouse::Event::Type::LPress && minefield.tileExistsAtLocation(e.GetPos())) {
-						minefield.partiallyRevealTileAt(e.GetPos());
+						minefield.partiallyRevealTileAtLocation(e.GetPos());
 					}
 					if (e.GetType() == Mouse::Event::Type::LRelease) {
 						if (minefield.tileExistsAtLocation(e.GetPos()) && minefield.tileAtLocationIsPartiallyRevealed(e.GetPos())) {
 							if (minefield.getRevealedCounter() == 0) {
 							}
-							minefield.revealTileAt(e.GetPos());
+							minefield.revealTileAtLocation(e.GetPos());
 						}
 						else {
 							minefield.hidePartiallyRevealedTile();
@@ -41,12 +41,12 @@ namespace InputHandler {
 
 					else if (e.GetType() == Mouse::Event::Type::RPress) {
 						if (minefield.tileExistsAtLocation(e.GetPos())) {
-							minefield.flagTileAt(e.GetPos());
+							minefield.toggleTileFlagAtLocation(e.GetPos());
 						}
 					}
 					else if ((e.GetType() == Mouse::Event::Type::MPress) || (mouse.LeftIsPressed() && mouse.RightIsPressed())) {
 						if (minefield.tileExistsAtLocation(e.GetPos())) {
-							minefield.revealOrFlagAt(e.GetPos());
+							minefield.revealOrFlagTileAtLocation(e.GetPos());
 						}
 					}
 				}

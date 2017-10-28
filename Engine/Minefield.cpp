@@ -117,7 +117,7 @@ void Minefield::Tile::setState(State stateIn)
 
 	@return adjacentMineCount
 */
-int Minefield::Tile::getadjacentMineCount() const
+int Minefield::Tile::getAdjacentMineCount() const
 {
 	return adjacentMineCount;
 }
@@ -219,13 +219,13 @@ void Minefield::generateMines(Tile& clickedTile)
 		// Once mines have been spawned, set the numbers of each tile stating how many mines are nearby
 		for (int y = 0; y < height; ++y) {
 			for (int x = 0; x < width; ++x) {
-				int n = getadjacentMineCount(field[y*width + x]);
+				int n = getAdjacentMineCount(field[y*width + x]);
 				field[y*width + x].setAdjacentMineCount(n);
 			}
 		}
 
 	// Keep generating a new minefield unless clicked tile generates with 0 adjacent mines or has a mine (allow dying on first click because that's always fun) 
-	} while ((getadjacentMineCount(clickedTile) != 0)  && !clickedTile.hasMine());
+	} while ((getAdjacentMineCount(clickedTile) != 0)  && !clickedTile.hasMine());
 	
 	minesAreGenerated = true;
 }
@@ -250,7 +250,7 @@ void Minefield::clearMines()
 
 	@param gfx Graphics processor
 */
-void Minefield::draw(Graphics & gfx)
+void Minefield::draw(Graphics & gfx) const
 {
 	// Background rectangle
 	gfx.DrawRect(rectangle, SpriteCodex::baseColor);
@@ -267,23 +267,24 @@ void Minefield::draw(Graphics & gfx)
 }
 
 /**
-	Reveals a tile partially
-*/
-void Minefield::partiallyRevealTile(Tile & tileIn)
-{
-	tileIn.setState(Tile::State::PartiallyRevealed);
-}
+	Partially reveals a tile at given location
 
-void Minefield::partiallyRevealTileAt(Vei2 & globalLocation)
+	@param globalLocation Location where the tile to be revealed is
+*/
+void Minefield::partiallyRevealTileAtLocation(const Vei2 & globalLocation)
 {
-	const Vei2 tileLocation = getTileLocation(globalLocation);
-	Tile& tile = tileAt(tileLocation);
+	Tile& tile = getTileAtLocation(globalLocation);
 	if (tile.getState() == Tile::State::Hidden) {
 		tile.setState(Tile::State::PartiallyRevealed);
-		partiallyRevealedTilePtr = &tile;
+		partiallyRevealedTilePtr = &tile;	// Store the last partially revealed tile address in a pointer
 	}
 }
 
+/**
+	Converts a global location input to a tile location of the grid (e.g. tile at {324, 450} could be tile[0][3], this will return {0, 3})
+
+	@return tileLocation
+*/
 Vei2 Minefield::getTileLocation(const Vei2& globalLocation) const
 {
 	assert(rectangle.ContainsPoint(globalLocation));
@@ -293,6 +294,7 @@ Vei2 Minefield::getTileLocation(const Vei2& globalLocation) const
 	return tileLocation;
 }
 
+
 bool Minefield::tileExistsAtLocation(const Vei2& globalLocation) const
 {
 	return rectangle.ContainsPoint(globalLocation);
@@ -300,9 +302,7 @@ bool Minefield::tileExistsAtLocation(const Vei2& globalLocation) const
 
 bool Minefield::tileAtLocationIsPartiallyRevealed(const Vei2 & globalLocation) const
 {
-	const Vei2 tileLocation = getTileLocation(globalLocation);
-	const Tile& tile = tileAt(tileLocation);
-
+	const Tile& tile = getTileAtLocation(globalLocation);
 	return tile.getState() == Tile::State::PartiallyRevealed;
 }
 
@@ -316,21 +316,21 @@ int Minefield::getMineCounter() const
 	return nMines;
 }
 
-void Minefield::revealTileAt(Vei2 & globalLocation)
+void Minefield::revealTileAtLocation(const Vei2 & globalLocation)
 {
 	if(!isExploded) {
-		Vei2 tileLocation;
-		tileLocation = getTileLocation(globalLocation);
-		Tile& tileAtLocation = field[tileLocation.y * width + tileLocation.x];
+		Tile& tile = getTileAtLocation(globalLocation);
 
-		if (tileAtLocation.getState() == Minefield::Tile::State::Hidden ||
-			tileAtLocation.getState() == Minefield::Tile::State::PartiallyRevealed) {
-			bool okayReveal = !tileAtLocation.hasMine();
-			if (!okayReveal) {
+		if (tile.getState() == Minefield::Tile::State::Hidden ||
+			tile.getState() == Minefield::Tile::State::PartiallyRevealed) {
+			if (tile.hasMine()) {
 				isExploded = true;
 			}
-			revealRecursively(tileAtLocation);
-			partiallyRevealedTilePtr = nullptr;
+
+			revealRecursively(tile);
+			if (partiallyRevealedTilePtr != nullptr) {
+				partiallyRevealedTilePtr = nullptr;		
+			}
 		}
 	}
 }
@@ -340,8 +340,7 @@ void Minefield::revealRecursively(Tile & tileIn)
 	if (getRevealedCounter() == 0) {
 		generateMines(tileIn);
 	}
-	if (tileIn.getState() == Tile::State::Hidden ||
-		tileIn.getState() == Tile::State::PartiallyRevealed) {
+	if (tileIn.getState() == Tile::State::Hidden || tileIn.getState() == Tile::State::PartiallyRevealed) {
 		tileIn.setState(Tile::State::Revealed);
 		if (tileIn.hasMine()) {
 			isExploded = true;
@@ -350,7 +349,7 @@ void Minefield::revealRecursively(Tile & tileIn)
 		else {
 			++revealedCounter;
 		}
-		if (tileIn.getadjacentMineCount() != 0) {
+		if (tileIn.getAdjacentMineCount() != 0) {
 			return;
 		}
 		else {
@@ -358,12 +357,12 @@ void Minefield::revealRecursively(Tile & tileIn)
 			Vei2 revealStart;
 			Vei2 revealEnd;
 
-			Vei2 tileLocal = getTileLocation(tileIn.getPosition());
+			Vei2 tileLocalPosition = getTileLocation(tileIn.getPosition());
 
-			revealStart.x = std::max(0, tileLocal.x - 1);
-			revealEnd.x = std::min(tileLocal.x + 1, width - 1);
-			revealStart.y = std::max(0, tileLocal.y - 1);
-			revealEnd.y = std::min(tileLocal.y + 1, height - 1);
+			revealStart.x = std::max(0, tileLocalPosition.x - 1);
+			revealEnd.x = std::min(tileLocalPosition.x + 1, width - 1);
+			revealStart.y = std::max(0, tileLocalPosition.y - 1);
+			revealEnd.y = std::min(tileLocalPosition.y + 1, height - 1);
 
 			int mineCounter = 0;
 
@@ -403,7 +402,7 @@ bool Minefield::revealSurrounding(Tile & tileIn)
 	}
 
 	// It's okay to reveal surrounding mines
-	if (surroundingFlaggedCounter == tileIn.getadjacentMineCount()) {
+	if (surroundingFlaggedCounter == tileIn.getAdjacentMineCount()) {
 		for (int y = revealStart.y; y <= revealEnd.y; ++y) {
 			for (int x = revealStart.x; x <= revealEnd.x; ++x) {
 				Tile& adjacentTile = field[y*width + x];
@@ -419,7 +418,7 @@ bool Minefield::revealSurrounding(Tile & tileIn)
 	}
 }
 
-void Minefield::revealOrFlagAt(const Vei2 & globalLocation)
+void Minefield::revealOrFlagTileAtLocation(const Vei2 & globalLocation)
 {
 	Vei2 tileLocation;
 	tileLocation = getTileLocation(globalLocation);
@@ -428,11 +427,11 @@ void Minefield::revealOrFlagAt(const Vei2 & globalLocation)
 		revealSurrounding(tileIn);
 	}
 	else if (tileIn.getState() == Tile::State::Hidden || tileIn.getState() == Tile::State::Flagged) {
-		flagTileAt(globalLocation);		
+		toggleTileFlagAtLocation(globalLocation);		
 	}
 }
 
-void Minefield::flagTileAt(const Vei2 & globalLocation)
+void Minefield::toggleTileFlagAtLocation(const Vei2 & globalLocation)
 {
 	if (!isExploded) {
 		Vei2 tileLocation;
@@ -520,7 +519,23 @@ void Minefield::restart()
 	revealedCounter = 0;
 }
 
-int Minefield::getadjacentMineCount(const Tile& tileIn) const
+Minefield::Tile& Minefield::getTileAtLocation(const Vei2 & globalLocation)
+{
+	assert(rectangle.ContainsPoint(globalLocation));
+	Vei2 tileLocation = getTileLocation(globalLocation);
+	return tileAt(tileLocation);
+}
+
+const Minefield::Tile & Minefield::getTileAtLocation(const Vei2 & globalLocation) const
+{
+	assert(rectangle.ContainsPoint(globalLocation));
+	Vei2 tileLocation;
+	tileLocation.x = (globalLocation.x - field[0].getPosition().x) / Tile::size;
+	tileLocation.y = (globalLocation.y - field[0].getPosition().y) / Tile::size;
+	return tileAt(tileLocation);
+}
+
+int Minefield::getAdjacentMineCount(const Tile& tileIn) const
 {
 	
 	Vei2 checkStart;
