@@ -92,16 +92,14 @@ private:
 	const Tile& tileAt(const Vei2& tileLocation) const;
 	Tile& tileAt(const Vei2& tileLocation);
 
-
 	Tile* field = nullptr;
-	Tile* partiallyRevealedTilePtr = nullptr;
+	Tile* partiallyRevealedTilePtr = nullptr; // Keeps track of the tile that is partially revealed
 	int width;
 	int height;
-	Vei2 position = Vei2(0, 0);
 	int nMines;
 	int revealedCounter = 0;
 	int flaggedCount = 0;
-	RectI rectangle;
+	RectI rectangle; // Rectangle representing the minefield (location, dimensions)
 	DigitalDisplay minesLeftDisplay;
 
 
