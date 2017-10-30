@@ -48,7 +48,6 @@ private:
 		int adjacentMineCount;
 		State state = State::Hidden;
 		bool mine = false;
-
 	};
 
 public:
@@ -56,19 +55,17 @@ public:
 	Minefield(int widthIn, int heightIn, int nMinesIn);
 	Minefield(const Menu& menu);
 
-	void draw(Graphics& gfx) const;
 	void partiallyRevealTileAtLocation(const Vei2& globalLocation);
 	void revealTileAtLocation(const Vei2& globalLocation);
-	void revealOrFlagTileAtLocation(const Vei2& globalLocation);
+	void revealSurroundingTilesOrFlagTileAtLocation(const Vei2& globalLocation);
 	void toggleTileFlagAtLocation(const Vei2& globalLocation);
 	void hidePartiallyRevealedTile();
 	void restart();
 
+	void draw(Graphics& gfx) const;
 	bool revealedAll() const;
 	bool tileExistsAtLocation(const Vei2& globalLocation) const;
 	bool tileAtLocationIsPartiallyRevealed(const Vei2& globalLocation) const;
-	int getFlaggedCounter() const;
-	int getMineCounter() const;
 	int getRevealedCounter() const;
 	int getWidth() const;
 	int getHeight() const;
@@ -84,13 +81,14 @@ private:
 	Tile& getTileAtLocation(const Vei2& globalPosition);
 	const Tile& getTileAtLocation(const Vei2& globalPosition) const;
 
-
 	int getAdjacentMineCount(const Tile& tileIn) const;
+	Vei2 getTileBox3x3Start(const Tile& tileIn) const;
+	Vei2 getTileBox3x3End(const Tile& tileIn) const;
 	void updateDisplay();
 	void generateMines(Tile& clickedTile);
 	void clearMines();
 	void revealRecursively(Tile& tileIn);
-	bool revealSurrounding(Tile& tileIn);
+	bool revealSurroundingTiles(Tile& tileIn);
 	const Tile& tileAt(const Vei2& tileLocation) const;
 	Tile& tileAt(const Vei2& tileLocation);
 
@@ -102,7 +100,7 @@ private:
 	Vei2 position = Vei2(0, 0);
 	int nMines;
 	int revealedCounter = 0;
-	int flaggedCounter = 0;
+	int flaggedCount = 0;
 	RectI rectangle;
 	DigitalDisplay minesLeftDisplay;
 

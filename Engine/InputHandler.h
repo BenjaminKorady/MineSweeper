@@ -46,7 +46,7 @@ namespace InputHandler {
 					}
 					else if ((e.GetType() == Mouse::Event::Type::MPress) || (mouse.LeftIsPressed() && mouse.RightIsPressed())) {
 						if (minefield.tileExistsAtLocation(e.GetPos())) {
-							minefield.revealOrFlagTileAtLocation(e.GetPos());
+							minefield.revealSurroundingTilesOrFlagTileAtLocation(e.GetPos());
 						}
 					}
 				}

@@ -125,7 +125,7 @@ void Game::HandlePlayingKeyboardInput()
 			if (e.GetCode() == VK_SPACE) {
 				const Vei2 pos = wnd.mouse.GetPos();
 				if (minefield.tileExistsAtLocation(pos)) {
-					minefield.revealOrFlagTileAtLocation(pos);
+					minefield.revealSurroundingTilesOrFlagTileAtLocation(pos);
 				}
 			}
 		}
@@ -193,15 +193,14 @@ void Game::HandlePlayingMouseInput()
 				minefield.hidePartiallyRevealedTile();
 			}
 		}
-
+		else if ((e.GetType() == Mouse::Event::Type::MPress) || (wnd.mouse.LeftIsPressed() && wnd.mouse.RightIsPressed()) ) {
+			if (minefield.tileExistsAtLocation(e.GetPos())) {
+				minefield.revealSurroundingTilesOrFlagTileAtLocation(e.GetPos());
+			}
+		}
 		else if (e.GetType() == Mouse::Event::Type::RPress) {
 			if (minefield.tileExistsAtLocation(e.GetPos())) {
 				minefield.toggleTileFlagAtLocation(e.GetPos());
-			}
-		}
-		else if ((e.GetType() == Mouse::Event::Type::MPress) || (wnd.mouse.LeftIsPressed() && wnd.mouse.RightIsPressed()) ) {
-			if (minefield.tileExistsAtLocation(e.GetPos())) {
-				minefield.revealOrFlagTileAtLocation(e.GetPos());
 			}
 		}
 	}
