@@ -38,7 +38,7 @@ Menu::Menu()
 	options[2] = Option(Option::Name::Expert,		Vei2(30, 16),		99,			{ 82, 27 },		{ 86, 32 }		);
 }
 
-void Menu::Draw(Graphics & gfx)
+void Menu::draw(Graphics & gfx)
 {
 	int offsetX = (Graphics::ScreenWidth) / 2;
 	int offsetY = (Graphics::ScreenHeight - (getItemSizeY() * maxOptions)) / 2 + Option::spacing / 2;

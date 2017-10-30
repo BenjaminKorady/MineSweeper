@@ -93,7 +93,7 @@ void Game::UpdateModel()
 void Game::ComposeFrame()
 {
 	if (gameState == State::InMenu) {
-		menu.Draw(gfx);
+		menu.draw(gfx);
 	}
 	else {
 		minefield.draw(gfx);
