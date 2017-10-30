@@ -26,7 +26,7 @@ public:
 
 		Option() = default;
 		Option(Name nameIn, Vei2 sizeIn, int minesIn, Vei2 spriteSizeIn, Vei2 spriteGlowSizeIn);
-		void Draw(int x, int y, Graphics& gfx, bool glow);
+		void draw(int x, int y, Graphics& gfx, bool glow);
 
 	public:
 		static constexpr int spacing = 54;	// Spacing between menu options in the selection
