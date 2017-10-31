@@ -31,11 +31,15 @@
 class Game
 {
 public:
+	enum class InputType {
+		Mouse,
+		Keyboard
+	};
 	enum class State {
 		Playing,
 		Win,
 		Loss,
-		InMenu,
+		InMenu
 	};
 	
 public:
@@ -47,7 +51,6 @@ public:
 	void restartGame();
 	std::chrono::steady_clock::time_point gameStartTime;
 
-
 private:
 	void ComposeFrame();
 	void UpdateModel();
@@ -55,14 +58,8 @@ private:
 	/*  User Functions              */
 	/********************************/
 	
-	template<typename I, typename S>
-	void handleUserInput(I inputType, S gameState);
+	void handleUserInput();
 
-	void HandlePlayingMouseInput();
-	void HandlePlayingKeyboardInput();
-	void HandleGameOverMouseInput();
-	void HandleGameOverKeyboardInput();
-	void HandleInMenuMouseInput();
 	bool gameHasStarted() const;
 private:
 	MainWindow& wnd;
@@ -73,15 +70,10 @@ private:
 	Menu menu;
 	Minefield minefield;
 	State gameState;
-	Vei2 lastMousePos;
+	Vei2 lastMousePos = { 0, 0 };
 	DigitalDisplay timeDisplay;
 	std::chrono::steady_clock::time_point timeNow;
 	std::chrono::steady_clock::time_point gameEndTime;
 	int elapsedTime = 0;
 
 };
-
-template<typename I, typename S>
-inline void Game::handleUserInput(I inputType, S gameState)
-{
-}

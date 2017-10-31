@@ -100,6 +100,9 @@ void Mouse::OnLeftPressed( int x,int y )
 	leftIsPressed = true;
 
 	buffer.push( Mouse::Event( Mouse::Event::Type::LPress,*this ) );
+	if (rightIsPressed) {
+		buffer.push( Mouse::Event( Mouse::Event::Type::RLPress,*this ) );
+	}
 	TrimBuffer();
 }
 
@@ -116,6 +119,9 @@ void Mouse::OnRightPressed( int x,int y )
 	rightIsPressed = true;
 
 	buffer.push( Mouse::Event( Mouse::Event::Type::RPress,*this ) );
+	if (leftIsPressed) {
+		buffer.push( Mouse::Event( Mouse::Event::Type::LRPress,*this ) );
+	}
 	TrimBuffer();
 }
 

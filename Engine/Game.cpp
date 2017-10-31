@@ -43,6 +43,7 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	handleUserInput();
 	switch (gameState) {
 	case State::Playing: {
 		if (minefield.isExploded) {
@@ -60,26 +61,10 @@ void Game::UpdateModel()
 			}			
 			// else elaspedTime = 0;
 		}
-			HandlePlayingMouseInput();
-			HandlePlayingKeyboardInput();
 
 		} break;
-						
-	case State::Loss: {
-		HandleGameOverKeyboardInput();
-		HandleGameOverMouseInput();
-	} break;
-				
-	case State::Win: {
-		HandleGameOverKeyboardInput();
-		HandleGameOverMouseInput();
-	} break;
-			
 	case State::InMenu: {
-		if (menu.getSelectedOption() == Menu::Option::Name::None) {
-			HandleInMenuMouseInput();
-		}
-		else {
+		if (menu.getSelectedOption() != Menu::Option::Name::None) {
 			gameState = State::Playing;
 			minefield = Minefield(menu); // Create minefield based on menu option
 		}
@@ -117,92 +102,89 @@ void Game::restartGame()
 	menu.selectOption(Menu::Option::Name::None);
 }
 
-void Game::HandlePlayingKeyboardInput()
-{
-	while (!wnd.kbd.KeyIsEmpty()) {
-		const Keyboard::Event e = wnd.kbd.ReadKey();
-		if (e.IsPress()) {
-			if (e.GetCode() == VK_SPACE) {
-				const Vei2 pos = wnd.mouse.GetPos();
-				if (minefield.tileExistsAtLocation(pos)) {
-					minefield.revealSurroundingTilesOrFlagTileAtLocation(pos);
-				}
-			}
-		}
-	}
-}
-
-void Game::HandleGameOverMouseInput()
-{
-	while (!wnd.mouse.IsEmpty()) {
-		const Mouse::Event e = wnd.mouse.Read();
-		if (e.GetType() == Mouse::Event::Type::LRelease) {
-			if (wnd.mouse.IsInWindow()) {
-				restartGame();
-			}
-		}
-	}
-}
-
-void Game::HandleGameOverKeyboardInput()
-{
-	while (!wnd.kbd.KeyIsEmpty()) {
-		const Keyboard::Event e = wnd.kbd.ReadKey();
-		if (e.IsRelease()) {
-			if (e.GetCode() == VK_RETURN) {
-				restartGame();
-			}
-		}
-	}
-
-}
-
-void Game::HandleInMenuMouseInput()
-{
-	while (!wnd.mouse.IsEmpty()) {
-		const Mouse::Event e = wnd.mouse.Read();
-		lastMousePos = e.GetPos();
-
-		if (e.GetType() == Mouse::Event::Type::LRelease) {
-			menu.selectOption(menu.PointIsOverOption(lastMousePos));
-		}
-	}
-	menu.highlightOption(menu.PointIsOverOption(lastMousePos));
-}
-
 bool Game::gameHasStarted() const
 {
 	return minefield.getRevealedCounter() >= 1;
 }
 
-void Game::HandlePlayingMouseInput()
+void Game::handleUserInput()
 {
 	while (!wnd.mouse.IsEmpty()) {
 		const Mouse::Event e = wnd.mouse.Read();
-		if (e.GetType() == Mouse::Event::Type::LPress && minefield.tileExistsAtLocation(e.GetPos())) {
-			minefield.partiallyRevealTileAtLocation(e.GetPos());
+		lastMousePos = e.GetPos();
+
+		switch (gameState) {
+		case State::InMenu: {
+			menu.highlightOption(menu.PointIsOverOption(lastMousePos));
+			if (e.GetType() == Mouse::Event::Type::LPress) {
+				menu.selectOption(menu.PointIsOverOption(lastMousePos));
+			}
 		}
-		if (e.GetType() == Mouse::Event::Type::LRelease) {
-			if (minefield.tileExistsAtLocation(e.GetPos()) && minefield.tileAtLocationIsPartiallyRevealed(e.GetPos()) ) {
-				if (minefield.getRevealedCounter() == 0) {
-					gameStartTime = std::chrono::steady_clock::now();
+							break;
+		case State::Playing: {
+			if (minefield.tileExistsAtLocation(lastMousePos)) {
+				switch (e.GetType()) {
+				case Mouse::Event::Type::LPress: {
+					minefield.partiallyRevealTileAtLocation(lastMousePos);
 				}
-				minefield.revealTileAtLocation(e.GetPos());
-			}
-			else {
-				minefield.hidePartiallyRevealedTile();
+					break;
+				case Mouse::Event::Type::LRelease: {
+					if (minefield.tileAtLocationIsPartiallyRevealed(lastMousePos)) {
+						if (minefield.getRevealedCounter() == 0) {
+							gameStartTime = std::chrono::steady_clock::now();
+						}
+						minefield.revealTileAtLocation(lastMousePos);
+					}
+					else {
+						minefield.hidePartiallyRevealedTile();
+					}
+				}
+					break;
+				case Mouse::Event::Type::RLPress:
+				case Mouse::Event::Type::MPress:
+				{
+					minefield.revealSurroundingTilesOrFlagTileAtLocation(e.GetPos());
+				}
+					break;
+				case Mouse::Event::Type::RPress: {
+					minefield.toggleTileFlagAtLocation(e.GetPos());
+				}
+					break;
+				}
 			}
 		}
-		else if ((e.GetType() == Mouse::Event::Type::MPress) || (wnd.mouse.LeftIsPressed() && wnd.mouse.RightIsPressed()) ) {
-			if (minefield.tileExistsAtLocation(e.GetPos())) {
-				minefield.revealSurroundingTilesOrFlagTileAtLocation(e.GetPos());
+			break;
+		case State::Loss:
+		case State::Win: {
+			if (e.GetType() == Mouse::Event::Type::LPress) {
+				restartGame();
 			}
 		}
-		else if (e.GetType() == Mouse::Event::Type::RPress) {
-			if (minefield.tileExistsAtLocation(e.GetPos())) {
-				minefield.toggleTileFlagAtLocation(e.GetPos());
+			break;
+		}
+	}
+
+	while (!wnd.kbd.KeyIsEmpty()) {
+		const Keyboard::Event e = wnd.kbd.ReadKey();
+		if (e.IsPress()) {
+			switch (gameState) {
+			case State::Playing: {
+				if (minefield.tileExistsAtLocation(lastMousePos)) {
+					if (e.GetCode() == VK_SPACE) {
+						minefield.revealSurroundingTilesOrFlagTileAtLocation(lastMousePos);
+					}
+					break;
+				}
+			}
+								 break;
+			case State::Loss:
+			case State::Win: {
+				if (e.GetCode() == VK_SPACE || e.GetCode() == VK_RETURN) {
+					restartGame();
+				}
+			}
+							 break;
 			}
 		}
 	}
-}
-
+} 

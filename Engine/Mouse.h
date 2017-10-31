@@ -40,7 +40,9 @@ public:
 			Move,
 			Invalid,
 			MPress,
-			MRelease
+			MRelease,
+			RLPress,
+			LRPress
 		};
 	private:
 		Type type;
