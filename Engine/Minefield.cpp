@@ -224,8 +224,8 @@ void Minefield::generateMines(Tile& clickedTile)
 			}
 		}
 
-	// Keep generating a new minefield unless clicked tile generates with 0 adjacent mines or has a mine (allow dying on first click because that's always fun) 
-	} while ((getAdjacentMineCount(clickedTile) != 0)  && !clickedTile.hasMine());
+	// Keep generating a new minefield unless clicked tile generates with 0 adjacent mines 
+	} while ((getAdjacentMineCount(clickedTile) != 0) );
 	
 	minesAreGenerated = true;
 }
