@@ -18,6 +18,14 @@
  *	You should have received a copy of the GNU General Public License					  *
  *	along with The Chili DirectX Framework.  If not, see <http://www.gnu.org/licenses/>.  *
  ******************************************************************************************/
+
+/**
+	Main game logic
+
+	@author Benjamin Korady
+	@author Chili
+	@version 1.0 27/10/2017
+*/
 #pragma once
 
 #include "Keyboard.h"
@@ -47,33 +55,23 @@ public:
 	Game( const Game& ) = delete;
 	Game& operator=( const Game& ) = delete; 
 	void Go();
-public:
-	void restartGame();
-	std::chrono::steady_clock::time_point gameStartTime;
-
 private:
 	void ComposeFrame();
 	void UpdateModel();
-	/********************************/
-	/*  User Functions              */
-	/********************************/
-	
 	void handleUserInput();
-
+	void restartGame();
 	bool gameHasStarted() const;
 private:
 	MainWindow& wnd;
 	Graphics gfx;
-	/********************************/
-	/*  User Variables              */
-	/********************************/
+
 	Menu menu;
 	Minefield minefield;
 	State gameState;
 	Vei2 lastMousePos = { 0, 0 };
 	DigitalDisplay timeDisplay;
+	std::chrono::steady_clock::time_point gameStartTime;
 	std::chrono::steady_clock::time_point timeNow;
 	std::chrono::steady_clock::time_point gameEndTime;
 	int elapsedTime = 0;
-
 };

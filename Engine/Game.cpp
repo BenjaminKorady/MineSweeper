@@ -23,6 +23,11 @@
 #include "SpriteCodex.h"
 #include "DigitalDisplay.h"
 
+/**
+	Constructs the game object
+
+	@param wnd The main window in which the game runs
+*/
 Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
@@ -33,6 +38,9 @@ Game::Game(MainWindow& wnd)
 {
 }
 
+/**
+	Game loop
+*/
 void Game::Go()
 {
 	gfx.BeginFrame();
@@ -41,9 +49,13 @@ void Game::Go()
 	gfx.EndFrame();
 }
 
+/**
+	Logic update
+*/
 void Game::UpdateModel()
 {
 	handleUserInput();
+
 	switch (gameState) {
 	case State::Playing: {
 		if (minefield.isExploded) {
@@ -59,22 +71,22 @@ void Game::UpdateModel()
 				elapsedTime = (int)std::chrono::duration_cast<std::chrono::seconds>(timeNow - gameStartTime).count();
 				timeDisplay = DigitalDisplay(elapsedTime);
 			}			
-			// else elaspedTime = 0;
 		}
 
-		} break;
+	}	break;
 	case State::InMenu: {
-		if (menu.getSelectedOption() != Menu::Option::Name::None) {
+		if (menu.getSelectedOption() != Menu::Option::Name::None) {	// Menu option gets selected
 			gameState = State::Playing;
 			minefield = Minefield(menu); // Create minefield based on menu option
 		}
 
 	}  break;
-
 	}
-	
 }
 
+/**
+	Loads the frame graphic into the memory
+*/
 void Game::ComposeFrame()
 {
 	if (gameState == State::InMenu) {
@@ -88,7 +100,6 @@ void Game::ComposeFrame()
 	}
 
 	switch (gameState) {
-
 	case State::Win:
 		SpriteCodex::drawGameWin(gfx); break;
 	case State::Loss:
@@ -96,60 +107,75 @@ void Game::ComposeFrame()
 	}
 }
 
+/**
+	Returns the game back into the menu
+*/
 void Game::restartGame()
 {
 	gameState = State::InMenu;
 	menu.selectOption(Menu::Option::Name::None);
 }
 
+/**
+	Returns true if at least one mine was revealed
+
+	@param bool
+*/
 bool Game::gameHasStarted() const
 {
 	return minefield.getRevealedCounter() >= 1;
 }
 
+/**
+	Manages all the user input (kseyboard and mouse)
+*/
 void Game::handleUserInput()
 {
-	// Mouse input
+	
+	// Loop while either the mouse or keyboard buffers are not empty
 	while (!wnd.mouse.IsEmpty() || !wnd.kbd.KeyIsEmpty()) {
 		Mouse::Event mouseEv;
 		Keyboard::Event kbrdEv;
+		// Store mouse event
 		if (!wnd.mouse.IsEmpty()) {
 			mouseEv = wnd.mouse.Read();
 			lastMousePos = mouseEv.GetPos();
 		}
+		// Store keyboard event
 		if (!wnd.kbd.KeyIsEmpty()) {
 			const Keyboard::Event temp = wnd.kbd.ReadKey();
 			if (temp.IsPress()) {
-				kbrdEv = temp;
+				kbrdEv = temp;	// Only store the keyboard event if a key was PRESSED (not released)
 			}
 		}
 
+		
 		switch (gameState) {
 		case State::InMenu: {
 			menu.highlightOption(menu.PointIsOverOption(lastMousePos));
 			if (mouseEv.GetType() == Mouse::Event::Type::LPress) {
-				menu.selectOption(menu.PointIsOverOption(lastMousePos));
+				menu.selectOption(menu.PointIsOverOption(lastMousePos));	// Selects the option over which the mouse is hovering
 			}
 		}
 			break;
 		case State::Playing: {
 			if (minefield.tileExistsAtLocation(lastMousePos)) {
 				if(mouseEv.GetType() == Mouse::Event::Type::LPress) {
-					minefield.partiallyRevealTileAtLocation(lastMousePos);
-				}
+					minefield.partiallyRevealTileAtLocation(lastMousePos); // Tile not revealed unless the user pressed
+				}														   // and released mouse click on the same tile
 				else if (mouseEv.GetType() == Mouse::Event::Type::LRelease) {
 					if (minefield.tileAtLocationIsPartiallyRevealed(lastMousePos)) {
-						if (minefield.getRevealedCounter() == 0) {
+						if (minefield.getRevealedCounter() == 0) {	// If we are revealing the first tile
 							gameStartTime = std::chrono::steady_clock::now();
 						}
 						minefield.revealTileAtLocation(lastMousePos);
 					}
-					else {
+					else {	// Pressed on a tile but released on a different tile
 						minefield.hidePartiallyRevealedTile();
 					}
 				}
 				else if (
-					   mouseEv.GetType() == Mouse::Event::Type::RLPress 
+					   mouseEv.GetType() == Mouse::Event::Type::RLPress // Right + Left click at the same time (right first)
 					|| mouseEv.GetType() == Mouse::Event::Type::MPress 
 					|| kbrdEv.GetCode() == VK_SPACE) 
 				{
