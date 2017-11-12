@@ -64,6 +64,7 @@ void Game::UpdateModel()
 		else if (minefield.revealedAll()) {
 			gameState = State::Win;
 			gameEndTime = std::chrono::steady_clock::now();
+			minefield.flagRemainingTiles();
 		}
 		else { // Game is running
 			timeNow = std::chrono::steady_clock::now();
@@ -100,10 +101,10 @@ void Game::ComposeFrame()
 	}
 
 	switch (gameState) {
-	case State::Win:
-		SpriteCodex::drawGameWin(gfx); break;
-	case State::Loss:
-		SpriteCodex::drawGameLoss(gfx); break;
+	case State::Win:;
+		// SpriteCodex::drawGameWin(gfx); break;
+	case State::Loss:;
+		//SpriteCodex::drawGameLoss(gfx); break;
 	}
 }
 

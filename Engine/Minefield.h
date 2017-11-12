@@ -60,6 +60,7 @@ public:
 	void revealSurroundingTilesOrFlagTileAtLocation(const Vei2& globalLocation);
 	void toggleTileFlagAtLocation(const Vei2& globalLocation);
 	void hidePartiallyRevealedTile();
+	void flagRemainingTiles();
 	void restart();
 
 	void draw(Graphics& gfx) const;

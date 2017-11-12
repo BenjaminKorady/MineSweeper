@@ -484,6 +484,18 @@ void Minefield::hidePartiallyRevealedTile()
 	}
 }
 
+void Minefield::flagRemainingTiles()
+{
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width; ++x) {
+			Tile& tile = field[y*width + x];
+			if (tile.hasMine() && tile.getState() == Tile::State::Hidden) {
+				tile.setState(Tile::State::Flagged);
+			}
+		}
+	}
+}
+
 /**
 	Returns true if all tiles have been revealed
 
