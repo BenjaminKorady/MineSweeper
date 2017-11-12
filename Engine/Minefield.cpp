@@ -491,9 +491,11 @@ void Minefield::flagRemainingTiles()
 			Tile& tile = field[y*width + x];
 			if (tile.hasMine() && tile.getState() == Tile::State::Hidden) {
 				tile.setState(Tile::State::Flagged);
+				++flaggedCount;
 			}
 		}
 	}
+	updateDisplay();
 }
 
 /**
