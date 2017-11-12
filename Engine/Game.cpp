@@ -100,11 +100,12 @@ void Game::ComposeFrame()
 		timeDisplay.draw(gfx, x, y);
 	}
 
+	constexpr int offsetFromMinefield = 10;
 	switch (gameState) {
 	case State::Win:;
-		// SpriteCodex::drawGameWin(gfx); break;
+		SpriteCodex::drawGameWin(gfx, minefield.getHeight() / 2 + offsetFromMinefield); break;
 	case State::Loss:;
-		//SpriteCodex::drawGameLoss(gfx); break;
+		SpriteCodex::drawGameLoss(gfx, minefield.getHeight() / 2 + offsetFromMinefield); break;
 	}
 }
 

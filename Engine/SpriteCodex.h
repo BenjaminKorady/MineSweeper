@@ -40,8 +40,8 @@ public:
 	static void drawTileNumber(int number, const Vei2& pos, Graphics& gfx);
 	static void drawTileMine( const Vei2& pos,Graphics& gfx );
 	static void drawTileMineRed( const Vei2& pos,Graphics& gfx );
-	static void drawGameWin(Graphics& gfx);
-	static void drawGameLoss(Graphics& gfx);
+	static void drawGameWin(Graphics& gfx, int yOffset);
+	static void drawGameLoss(Graphics& gfx, int yOffset);
 	static void drawBeginner(int x, int y, Graphics& gfx);
 	static void drawIntermediate(int x, int y, Graphics& gfx);
 	static void drawExpert(int x, int y, Graphics& gfx);

@@ -19,6 +19,13 @@
  *	along with The Chili DirectX Framework.  If not, see <http://www.gnu.org/licenses/>.  *
  ******************************************************************************************/
 
+/******************************************************************************************
+ *	This code was based on a video from the Beginner C++ Tutorial series by               *
+ *	ChiliTomatoNoodle:                                                                    *
+ *	https://www.youtube.com/watch?v=DkjOZ_Hlqbs                                           *
+ *	It was later adjusted and modified to extend its functionality                        *
+ ******************************************************************************************/
+
 /**
 	Main game logic
 
